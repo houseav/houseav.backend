@@ -45,11 +45,12 @@ describe('UserModule', () => {
 
   // Mock repositories
   const mockUserRepository = {
-    find: jest.fn(),
+    findAll: jest.fn(),
     findOne: jest.fn(),
     save: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    find: jest.fn(),
   };
 
   const mockRoleRepository = {
@@ -242,5 +243,18 @@ describe('UserModule', () => {
 
     // Assert
     expect(result).toEqual({ message: 'Error while saving users' });
+  });
+
+  /**
+   *  Find all users
+   */
+  it('should return an array of users', async () => {
+    // Arrange
+    const mockUsers = [{ id: 1, email: 'test@example.com' }];
+    mockUserRepository.find.mockResolvedValueOnce(mockUsers);
+
+    // Act
+    const result = await userService.findAll();
+    expect(result).toEqual(mockUsers);
   });
 });
