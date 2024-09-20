@@ -1,18 +1,211 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
+import { RoleService } from 'src/role/role.service';
+import { ChurchService } from 'src/church/church.service';
+import { QueueUserRegistrationService } from 'src/queue-user-registration/queue-user-registration.service';
+import { PolicyService } from 'src/policy/policy.service';
+import { ReferenceLetterService } from 'src/reference-letter/reference-letter.service';
+import { MailgunService } from 'src/mailgun/mailgun.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Role } from 'src/role/entities/role.entity';
+import { Church } from 'src/church/entities/church.entity';
+import { Repository } from 'typeorm';
+import { QueueRegister } from 'src/queue-user-registration/entities/queue-register.entity';
+import { Policy } from 'src/policy/entities/policy.entity';
+import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
+import * as bcrypt from 'bcrypt';
 
-describe('UserService', () => {
-  let service: UserService;
+const UserRegistrationDto = {
+  userInfo: {
+    email: 'test@example.com',
+    password: '12345',
+    username: 'testuser',
+    number: '1234567890',
+    prefix: 'Mr.',
+    churchId: {
+      id: '1',
+      name: 'Church',
+      address: 'Church Address',
+    },
+  },
+  referenceLetter: {
+    id: 1,
+    namePastorLeader: 'John',
+    surnamePastorLeader: 'Doe',
+    numberPastorLeader: '1234567890',
+    timeInChurch: new Date(),
+    acceptDecline: true,
+    dateBaptism: new Date(),
+    nameGuardian: 'John',
+    numberGuardian: '1234567890',
+    numberChurch: '1234567890',
+    referenceDetails: 'Reference Details',
+    fkPolicyId: { id: 1, labelPolicy: 'Policy', description: 'Policy' },
+  },
+};
+
+describe('UserModule', () => {
+  let mailgunService: MailgunService;
+  let userService: UserService;
+
+  // Mocking repositories
+  const mockRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  // Mock repositories
+  const mockUserRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  const mockRoleRepository = {
+    findOne: jest.fn(),
+  };
+
+  const mockChurchRepository = {
+    findOne: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockQueueRegisterRepository = {
+    save: jest.fn(),
+  };
+
+  const mockPolicyRepository = {
+    findOne: jest.fn(),
+  };
+
+  const mockReferenceLetterRepository = {
+    save: jest.fn(),
+    update: jest.fn(),
+  };
+
+  // Mocking the MailgunService
+  const mockMailgunService = {
+    sendEmail: jest.fn().mockResolvedValue({ success: true }), // Example mock function
+  };
 
   beforeEach(async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService],
+      providers: [
+        UserService,
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository,
+        },
+        {
+          provide: getRepositoryToken(Role),
+          useValue: mockRoleRepository,
+        },
+        {
+          provide: getRepositoryToken(Church),
+          useValue: mockChurchRepository,
+        },
+        {
+          provide: getRepositoryToken(QueueRegister),
+          useValue: mockQueueRegisterRepository,
+        },
+        {
+          provide: getRepositoryToken(Policy),
+          useValue: mockPolicyRepository,
+        },
+        {
+          provide: getRepositoryToken(ReferenceLetter),
+          useValue: mockReferenceLetterRepository,
+        },
+        {
+          provide: MailgunService,
+          useValue: mockMailgunService,
+        },
+      ],
     }).compile();
 
-    service = module.get<UserService>(UserService);
+    // Retrieve services from the compiled module
+    userService = module.get<UserService>(UserService);
+    mailgunService = module.get<MailgunService>(MailgunService);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(userService).toBeDefined();
+    expect(mailgunService).toBeDefined();
+  });
+
+  /**
+   *  Email already exists
+   */
+  it('should return "Email not valid!" if email already exists', async () => {
+    // Arrange
+    mockUserRepository.findOne.mockResolvedValueOnce({
+      email: 'test@example.com',
+    });
+
+    // Act
+    const result = await userService.create(UserRegistrationDto);
+
+    // Assert
+    expect(result).toEqual('Email not valid!');
+    expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+      where: { email: 'test@example.com' },
+      relations: { fkRoleId: true },
+    });
+  });
+
+  /**
+   *  Successfull user creation
+   */
+  it('should save a new user with hashed password and return success message', async () => {
+    // Arrange
+    mockUserRepository.findOne.mockResolvedValueOnce(null); // Email does not exist
+    const mockRole = { id: 3, name: 'User' };
+    mockRoleRepository.findOne.mockResolvedValueOnce(mockRole);
+    const salt = 'randomSalt';
+    const hashedPassword = 'hashedPassword123';
+    jest.spyOn(bcrypt, 'genSalt').mockResolvedValue(salt);
+    jest.spyOn(bcrypt, 'hash').mockResolvedValue(hashedPassword);
+
+    mockUserRepository.save.mockImplementation(async (userEntity) => {
+      return { ...userEntity, id: 1 };
+    });
+
+    mockUserRepository.update.mockImplementation(async (userEntity) => {
+      return { ...userEntity, id: 1 };
+    });
+
+    mockPolicyRepository.findOne.mockResolvedValueOnce({ id: 1 });
+    mockReferenceLetterRepository.save.mockResolvedValueOnce({ id: 1 });
+    mockReferenceLetterRepository.update.mockImplementation(
+      async (referenceLetterEntity) => {
+        return { ...referenceLetterEntity, id: 1 };
+      },
+    );
+    mockQueueRegisterRepository.save.mockResolvedValueOnce({ id: 1 });
+
+    // Act
+    const result = await userService.create(UserRegistrationDto);
+    if (result == undefined) {
+      throw new Error('User not created');
+    }
+    // Assert
+    expect(bcrypt.genSalt).toHaveBeenCalled();
+    expect(bcrypt.hash).toHaveBeenCalledWith('12345', salt);
+    expect(mockUserRepository.save).toHaveBeenCalled();
+    expect(mockMailgunService.sendEmail).toHaveBeenCalledWith(
+      'test@example.com',
+    );
+    expect(result).toEqual({ message: 'User created with success' });
   });
 });

@@ -1,4 +1,4 @@
-import { FORGOT_PASSWORD_ENDPOINT } from 'utils/constants';
+import { FORGOT_PASSWORD_ENDPOINT } from '../../../utils/constants';
 
 export const ForgotPassword = (
   temporaryPassword: string,

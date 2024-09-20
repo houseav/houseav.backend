@@ -1,18 +1,18 @@
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-// import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { In, Repository } from 'typeorm';
-import { Role } from 'src/role/entities/role.entity';
-import { SignUpDto } from './dto/sign-up.dto';
 import * as bcrypt from 'bcrypt';
+
+import { User } from './entities/user.entity';
+import { Role } from 'src/role/entities/role.entity';
 import { QueueRegister } from '../queue-user-registration/entities/queue-register.entity';
 import { Church } from 'src/church/entities/church.entity';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserRegistrationDto } from './dto/user-registration.dto';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
+
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserRegistrationDto } from './dto/user-registration.dto';
+
 import { MailgunService } from 'src/mailgun/mailgun.service';
 
 @Injectable()
@@ -108,10 +108,10 @@ export class UserService {
 
         // TODO not understand why user cascade doesnt update fkQueueRegisterId directly, therefore i'm updating it manually
         if (queueUserRegisterSaved) {
-          user.fkQueueRegisterId = queueUserRegisterSaved;
+          userSaved.fkQueueRegisterId = queueUserRegisterSaved;
           const userUpdateQueue = await this.userRepository.update(
-            user.id,
-            user,
+            userSaved.id,
+            userSaved,
           );
 
           referenceLetterSaved.fkQueueRegisterId = queueUserRegisterSaved;

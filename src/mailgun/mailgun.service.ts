@@ -5,7 +5,7 @@ import {
   MAILGUN_DOMAIN,
   MAILGUN_FROM_NO_REPLY,
   MAILGUN_USER,
-} from 'utils/constants';
+} from '../../utils/constants';
 import { alert } from './templates/sign-up';
 import { ForgotPassword } from './templates/forgot-password';
 import { UserVerifiedMailTemplate } from './templates/user-verified';
