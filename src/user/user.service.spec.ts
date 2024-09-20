@@ -208,4 +208,39 @@ describe('UserModule', () => {
     );
     expect(result).toEqual({ message: 'User created with success' });
   });
+
+  /**
+   *  Church creation if churchId is "altro"
+   */
+  it('should save a new church if churchId is "altro"', async () => {
+    // Arrange
+    const customChurchDto = {
+      ...UserRegistrationDto,
+      userInfo: {
+        ...UserRegistrationDto.userInfo,
+        churchId: {
+          id: 'altro',
+          name: 'Custom Church',
+          address: 'Custom Address',
+        },
+      },
+    };
+    mockUserRepository.findOne.mockResolvedValueOnce(null);
+    mockChurchRepository.save.mockResolvedValueOnce({
+      id: 2,
+      name: 'Custom Church',
+    });
+    // Mock other required repository methods...
+
+    // Act
+    await userService.create(customChurchDto);
+
+    // Assert
+    expect(mockChurchRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Custom Church',
+        address: 'Custom Address',
+      }),
+    );
+  });
 });

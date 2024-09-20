@@ -1,6 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
-import { Church } from 'src/church/entities/church.entity';
 import { SignUpDto } from './sign-up.dto';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 
