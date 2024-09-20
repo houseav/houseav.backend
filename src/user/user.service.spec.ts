@@ -243,4 +243,19 @@ describe('UserModule', () => {
       }),
     );
   });
+
+  /**
+   *  Error handling
+   */
+  it('should return error message if any error occurs', async () => {
+    // Arrange
+    mockUserRepository.findOne.mockResolvedValueOnce(null);
+    mockUserRepository.save.mockRejectedValueOnce(new Error('Database Error'));
+
+    // Act
+    const result = await userService.create(UserRegistrationDto);
+
+    // Assert
+    expect(result).toEqual({ message: 'Error while saving users' });
+  });
 });
