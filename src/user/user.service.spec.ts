@@ -1,16 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { RoleService } from 'src/role/role.service';
-import { ChurchService } from 'src/church/church.service';
-import { QueueUserRegistrationService } from 'src/queue-user-registration/queue-user-registration.service';
-import { PolicyService } from 'src/policy/policy.service';
-import { ReferenceLetterService } from 'src/reference-letter/reference-letter.service';
 import { MailgunService } from 'src/mailgun/mailgun.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { Church } from 'src/church/entities/church.entity';
-import { Repository } from 'typeorm';
 import { QueueRegister } from 'src/queue-user-registration/entities/queue-register.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
@@ -48,15 +42,6 @@ const UserRegistrationDto = {
 describe('UserModule', () => {
   let mailgunService: MailgunService;
   let userService: UserService;
-
-  // Mocking repositories
-  const mockRepository = {
-    find: jest.fn(),
-    findOne: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
 
   // Mock repositories
   const mockUserRepository = {
