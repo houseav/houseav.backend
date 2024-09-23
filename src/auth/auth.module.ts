@@ -53,14 +53,6 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
       useFactory: (configService: ConfigService) => {
         const secret = configService.get<string>('AUTH_SECRET');
         const expiresIn = configService.get<string>('AUTH_DURATION');
-
-        console.log('J---------AUTH SECR:', secret);
-        console.log('J---------AUTH DURATION:', expiresIn);
-        console.log(
-          'J---------DBHOST:',
-          configService.get<string>('DATABASE_HOST'),
-        );
-
         return {
           secret: secret,
           signOptions: { expiresIn: expiresIn },

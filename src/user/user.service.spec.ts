@@ -9,6 +9,7 @@ import { QueueRegister } from 'src/queue-user-registration/entities/queue-regist
 import { Policy } from 'src/policy/entities/policy.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from './dto/create-user.dto';
 
 const UserRegistrationDto = {
   userInfo: {
@@ -37,6 +38,30 @@ const UserRegistrationDto = {
     referenceDetails: 'Reference Details',
     fkPolicyId: { id: 1, labelPolicy: 'Policy', description: 'Policy' },
   },
+};
+
+const updateUserDto: CreateUserDto = {
+  id: 1,
+  username: 'updatedUser',
+  email: 'updated@email.com',
+  password: 'shouldBeIgnored',
+  number: '123235435',
+  avatar: 'http://example.com/avatar.jpg',
+  roleId: '2',
+  churchId: {
+    id: 1,
+    name: 'Sabaoth Church',
+    address: 'Via Rosalba Carriera 11, Milano',
+  },
+  verified: true,
+};
+
+const updatedUser = {
+  id: 1,
+  password: 'shouldBeIgnored',
+  username: 'updatedUser',
+  email: 'updated@email.com',
+  fkRoleId: { id: 2, name: 'user' },
 };
 
 describe('UserModule', () => {
@@ -256,5 +281,33 @@ describe('UserModule', () => {
     // Act
     const result = await userService.findAll();
     expect(result).toEqual(mockUsers);
+  });
+
+  /**
+   *  Update user
+   */
+  it('should update a user and return the updated user', async () => {
+    const userId = 1;
+    mockUserRepository.update.mockResolvedValue({ affected: 1 });
+    mockUserRepository.findOne.mockResolvedValue(updatedUser);
+    const result = await userService.update(userId, updateUserDto);
+    expect(mockUserRepository.update).toHaveBeenCalledWith(userId, {
+      ...updateUserDto,
+      password: undefined,
+    });
+    expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+      where: { id: userId },
+      relations: { fkRoleId: true },
+    });
+    expect(result).toEqual(updatedUser);
+  });
+
+  it('should not update the password', async () => {
+    const userId = 1;
+    await userService.update(userId, updateUserDto);
+    expect(mockUserRepository.update).toHaveBeenCalledWith(
+      userId,
+      updateUserDto,
+    );
   });
 });
