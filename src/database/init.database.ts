@@ -1,7 +1,14 @@
-import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { User } from 'src/user/entities/user.entity';
+import { Role } from 'src/role/entities/role.entity';
+import { Church } from 'src/church/entities/church.entity';
+import { QueueRegister } from 'src/queue-user-registration/entities/queue-register.entity';
+import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
+import { config } from 'dotenv';
+config();
 
 @Injectable()
 export class DatabaseInitService implements OnApplicationBootstrap {
@@ -19,8 +26,8 @@ export class DatabaseInitService implements OnApplicationBootstrap {
       await queryRunner.startTransaction();
 
       // Check emptyness tables
-      const rolesCount = await queryRunner.manager.count('Role');
-      const churchesCount = await queryRunner.manager.count('Church');
+      const rolesCount = await queryRunner.manager.count(Role);
+      const churchesCount = await queryRunner.manager.count(Church);
 
       if (rolesCount === 0) {
         const rolesSqlPath = join(process.cwd(), 'utils', 'roles.sql');
@@ -36,6 +43,9 @@ export class DatabaseInitService implements OnApplicationBootstrap {
         console.log('Churches table has been populated.');
       }
 
+      // Create the first admin user
+      await this.createAdminUser(queryRunner);
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -43,5 +53,54 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  private async createAdminUser(queryRunner) {
+    // Create QueueRegister
+    const queueRegister = new QueueRegister();
+    queueRegister.verified = true;
+    queueRegister.adminVerifier = 'admin';
+    queueRegister.createdAt = new Date('2024-09-24 18:57:52.258');
+    queueRegister.updatedAt = new Date('2024-09-24 18:57:52.258');
+    await queryRunner.manager.save(queueRegister);
+
+    // Create ReferenceLetter
+    const referenceLetter = new ReferenceLetter();
+    referenceLetter.namePastorLeader = 'John';
+    referenceLetter.surnamePastorLeader = 'Doe';
+    referenceLetter.numberPastorLeader = '1234567890';
+    referenceLetter.timeInChurch = new Date('2020-01-01');
+    referenceLetter.dateBaptism = new Date('2020-01-01');
+    referenceLetter.nameGuardian = 'Jane Doe';
+    referenceLetter.numberGuardian = '0987654321';
+    referenceLetter.numberChurch = '1234567890';
+    referenceLetter.referenceDetails = 'Reference details';
+    referenceLetter.acceptDecline = true;
+    referenceLetter.fkQueueRegisterId = queueRegister;
+    referenceLetter.createdAt = new Date('2024-09-24 18:57:52.258');
+    referenceLetter.updatedAt = new Date('2024-09-24 18:57:52.258');
+    await queryRunner.manager.save(referenceLetter);
+
+    // Create User
+    const user = new User();
+    user.id = 1;
+    user.email = 'lucaimbalzano@gmail.com';
+    user.avatar = 'default';
+    user.username = 'admin';
+    user.prefix = '+39';
+    user.number = '3518279265';
+    user.password = process.env.ADMIN_PASSWORD;
+    console.log(process.env.ADMIN_PASSWORD);
+    user.createdAt = new Date('2024-09-24 18:57:52.258');
+    user.updatedAt = new Date('2024-09-24 18:57:52.258');
+    user.fkRoleId = await queryRunner.manager.findOne(Role, {
+      where: { name: 'super-admin' },
+    });
+    user.fkChurchId = await queryRunner.manager.findOne(Church, {
+      order: { id: 'ASC' },
+      skip: 1,
+    });
+    user.fkQueueRegisterId = queueRegister;
+    await queryRunner.manager.save(user);
   }
 }
