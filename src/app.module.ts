@@ -35,6 +35,7 @@ import { Policy } from './policy/entities/policy.entity';
 import { MailgunModule } from './mailgun/mailgun.module';
 import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
 import { ForgotPassword } from './forgot-password/entities/forgot-password.entity';
+import { DatabaseInitService } from './database/init.database';
 
 @Module({
   imports: [
@@ -95,6 +96,7 @@ import { ForgotPassword } from './forgot-password/entities/forgot-password.entit
   ],
   controllers: [AppController],
   providers: [
+    DatabaseInitService,
     AppService,
     {
       provide: APP_GUARD,
