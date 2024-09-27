@@ -89,18 +89,21 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     user.username = 'admin';
     user.prefix = '+39';
     user.number = '3518279265';
-    user.password = process.env.ADMIN_PASSWORD;
-    console.log(process.env.ADMIN_PASSWORD);
+    user.password = process.env.ADMIN_PSWD;
+    console.log(process.env.ADMIN_PSWD);
     user.createdAt = new Date('2024-09-24 18:57:52.258');
     user.updatedAt = new Date('2024-09-24 18:57:52.258');
     user.fkRoleId = await queryRunner.manager.findOne(Role, {
       where: { name: 'super-admin' },
     });
-    user.fkChurchId = await queryRunner.manager.findOne(Church, {
+    const churches = await queryRunner.manager.find(Church, {
       order: { id: 'ASC' },
       skip: 1,
+      take: 1,
     });
+    user.fkChurchId = churches[0];
     user.fkQueueRegisterId = queueRegister;
+    user.viewAdminChurches = 'ALL';
     await queryRunner.manager.save(user);
   }
 }
