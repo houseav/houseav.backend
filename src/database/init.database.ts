@@ -8,6 +8,7 @@ import { Church } from 'src/church/entities/church.entity';
 import { QueueRegister } from 'src/queue-user-registration/entities/queue-register.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { config } from 'dotenv';
+import { Policy } from 'src/policy/entities/policy.entity';
 config();
 
 @Injectable()
@@ -28,6 +29,7 @@ export class DatabaseInitService implements OnApplicationBootstrap {
       // Check emptyness tables
       const rolesCount = await queryRunner.manager.count(Role);
       const churchesCount = await queryRunner.manager.count(Church);
+      const policyCount = await queryRunner.manager.count(Policy);
 
       if (rolesCount === 0) {
         const rolesSqlPath = join(process.cwd(), 'utils', 'roles.sql');
@@ -43,6 +45,13 @@ export class DatabaseInitService implements OnApplicationBootstrap {
         console.log('Churches table has been populated.');
       }
 
+      if (policyCount === 0) {
+        const policySqlPath = join(process.cwd(), 'utils', 'policy.sql');
+        const policySql = await readFile(policySqlPath, 'utf8');
+        await queryRunner.query(policySql);
+        console.log('Policy table has been populated.');
+      }
+
       // Create the first admin user
       await this.createAdminUser(queryRunner);
 
@@ -56,6 +65,15 @@ export class DatabaseInitService implements OnApplicationBootstrap {
   }
 
   private async createAdminUser(queryRunner) {
+    const email = process.env.ADMIN_MAIL;
+    const alreadyExistEmail = await queryRunner.manager.findOne(User, {
+      where: { email: email },
+    });
+
+    if (alreadyExistEmail) {
+      return;
+    }
+
     // Create QueueRegister
     const queueRegister = new QueueRegister();
     queueRegister.verified = true;
@@ -84,13 +102,12 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     // Create User
     const user = new User();
     user.id = 1;
-    user.email = 'lucaimbalzano@gmail.com';
+    user.email = email;
     user.avatar = 'default';
     user.username = 'admin';
     user.prefix = '+39';
     user.number = '3518279265';
     user.password = process.env.ADMIN_PSWD;
-    console.log(process.env.ADMIN_PSWD);
     user.createdAt = new Date('2024-09-24 18:57:52.258');
     user.updatedAt = new Date('2024-09-24 18:57:52.258');
     user.fkRoleId = await queryRunner.manager.findOne(Role, {
