@@ -128,6 +128,13 @@ export class User {
   ])
   fkQueueRegisterId: QueueRegister;
 
+  /**
+   * @viewAdminChurches will define all the churches this user can see
+   * it can be:
+   * - 'idChurchX, idChurchY, idChurch..'
+   * - 'ALL'
+   *
+   */
   @Column({ nullable: true })
   viewAdminChurches?: string;
 }

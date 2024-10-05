@@ -167,9 +167,12 @@ export class UserService {
 
   async getChurchesFromViewAdminChurches(id: number): Promise<User | any> {
     const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) return { message: 'No user found' };
     const churchesAbleToSee = user.viewAdminChurches;
     const churches = [];
-    if (churchesAbleToSee) {
+    if (churchesAbleToSee == 'ALL') {
+      return await this.churchRepository.find();
+    } else if (churchesAbleToSee) {
       const churchesIds = churchesAbleToSee.split(',');
       for (let i = 0; i < churchesIds.length; i++) {
         const idChurchNumber = parseInt(churchesIds[i]);
