@@ -13,7 +13,6 @@ import { UpdateQueueUserRegistrationDto } from './dto/update-queue-user-registra
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateQueueUserRegistrationVerifyDto } from './dto/update-queue-user-registration-verify.dto';
 import { CreateChurchDto } from 'src/church/dto/create-church.dto';
-import { In } from 'typeorm';
 
 @ApiBearerAuth('access-token')
 @ApiTags('queue-user-registration')

@@ -5,7 +5,10 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
-import { QueueRegister } from '../queue-user-registration/entities/queue-register.entity';
+import {
+  AdminVerifier,
+  QueueRegister,
+} from '../queue-user-registration/entities/queue-register.entity';
 import { Church } from 'src/church/entities/church.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
@@ -185,7 +188,26 @@ export class UserService {
     } else {
       return { message: 'No churches to show' };
     }
+  }
 
-    return { message: 'No churches to show' };
+  async getUsersByAdminViewerOnQueueRegister(
+    id: string,
+  ): Promise<User[] | any> {
+    const userNotAuth = { message: 'User not autorized', status: 401 };
+    const idUser = +id;
+    const user = await this.userRepository.findOne({
+      where: { id: idUser },
+      relations: { fkRoleId: true, fkQueueRegisterId: true },
+    });
+    if (!user) return { message: 'User not found', status: 404 };
+    if (user.fkRoleId.name == 'admin' || user.fkRoleId.name == 'super-admin') {
+      if (user.fkQueueRegisterId.adminVerifier == AdminVerifier.SUPER_ADMIN) {
+        return await this.userRepository.find();
+      } else {
+        return userNotAuth;
+      }
+    } else {
+      return userNotAuth;
+    }
   }
 }
