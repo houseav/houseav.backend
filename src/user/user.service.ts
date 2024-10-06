@@ -202,7 +202,16 @@ export class UserService {
     if (!user) return { message: 'User not found', status: 404 };
     if (user.fkRoleId.name == 'admin' || user.fkRoleId.name == 'super-admin') {
       if (user.fkQueueRegisterId.adminVerifier == AdminVerifier.SUPER_ADMIN) {
-        return await this.userRepository.find();
+        const users = await this.userRepository.find({
+          relations: {
+            fkRoleId: true,
+            fkQueueRegisterId: true,
+          },
+        });
+        return users.map((user) => {
+          const { password, createdAt, updatedAt, ...rest } = user;
+          return rest;
+        });
       } else {
         return userNotAuth;
       }
