@@ -222,7 +222,52 @@ export class UserService {
     }
   }
 
-  async deleteAdminViewerFromUser(
+  async updateAdminViewerChurchFromUser(id: string,
+    idUser: string,
+  ): Promise<User | any> {
+    const userNotAuth = { message: 'User not authorized', status: 401 };
+    const userId = +idUser;
+    const churchId = +id;
+    let updatedUser;
+
+    // const church = await this.churchRepositoryq.findOne({
+    //   where: { id: } // check if church exist TODO remove
+    // })
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { fkRoleId: true, fkQueueRegisterId: true },
+    });
+
+    if(!user) return { message: 'User not found', status: 404};
+
+    if (
+      user.fkRoleId.name === 'admin' ||
+      user.fkRoleId.name === 'super-admin'
+    ) {
+      if (id === 'ALL') {
+        { message: 'You cannot modify if you have all churches with ALL tag', status: 403 }; 
+      } else {
+        if (
+          user.viewAdminChurches &&
+          user.viewAdminChurches.split(',').includes(id)
+        ) {
+          return { message: 'Church already in your group view', status: 403 };
+        } else {
+          user.viewAdminChurches.append(id); //appendo
+        }
+
+        updatedUser = await this.userRepository.update(userId, user);
+      }
+      const { password, createdAt, updatedAt, ...rest } = updatedUser;
+      rest.status = 200;
+      return rest;
+    } else {
+      return userNotAuth;
+    }
+  }
+
+  async deleteAdminViewerChurchFromUser(
     id: string,
     idUser: string,
   ): Promise<User | any> {

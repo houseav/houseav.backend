@@ -61,13 +61,18 @@ export class UserController {
     return this.userService.update(+id, updateUserDto);
   }
 
+  @Patch('admin-viewer-from-user/:id/:idUser')
+  updateAdminViewerChurchFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
+    return this.userService.updateAdminViewerChurchFromUser(+id, idUser);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
 
-  @Delete('delete-admin-viewer-from-user/:id/:idUser')
-  deleteAdminViewerFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
-    return this.userService.deleteAdminViewerFromUser(id, idUser);
+  @Delete('admin-viewer-from-user/:id/:idUser')
+  deleteAdminViewerChurchFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
+    return this.userService.deleteAdminViewerChurchFromUser(id, idUser);
   } 
 }
