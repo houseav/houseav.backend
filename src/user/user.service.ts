@@ -17,6 +17,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { AnyPtrRecord } from 'dns';
+import e from 'express';
 
 @Injectable()
 export class UserService {
@@ -215,6 +217,51 @@ export class UserService {
       } else {
         return userNotAuth;
       }
+    } else {
+      return userNotAuth;
+    }
+  }
+
+  async deleteAdminViewerFromUser(
+    id: string,
+    idUser: string,
+  ): Promise<User | any> {
+    const userNotAuth = { message: 'User not authorized', status: 401 };
+    const userId = +idUser;
+    let updatedUser;
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { fkRoleId: true, fkQueueRegisterId: true },
+    });
+
+    if(!user) return { message: 'User not found', status: 404};
+
+    if (
+      user.fkRoleId.name === 'admin' ||
+      user.fkRoleId.name === 'super-admin'
+    ) {
+      if (id === 'ALL') {
+        user.viewAdminChurches = null;
+        updatedUser = await this.userRepository.update(userId, user);
+      } else {
+        if (
+          user.viewAdminChurches &&
+          user.viewAdminChurches.split(',').includes(id)
+        ) {
+          user.viewAdminChurches = user.viewAdminChurches
+            .split(',')
+            .filter((item) => item !== id)
+            .join(',');
+        } else {
+          return { message: 'Church ID not found', status: 404 };
+        }
+
+        updatedUser = await this.userRepository.update(userId, user);
+      }
+      const { password, createdAt, updatedAt, ...rest } = updatedUser;
+      rest.status = 200;
+      return rest;
     } else {
       return userNotAuth;
     }

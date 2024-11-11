@@ -65,4 +65,9 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+
+  @Delete('delete-admin-viewer-from-user/:id/:idUser')
+  deleteAdminViewerFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
+    return this.userService.deleteAdminViewerFromUser(id, idUser);
+  } 
 }
