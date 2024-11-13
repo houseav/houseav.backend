@@ -229,12 +229,16 @@ export class UserService {
     const userNotAuth = { message: 'User not authorized', status: 401 };
     const userId = +idUser;
     const churchId = +id;
+    let church;
     let updatedUser;
 
-    const church = await this.churchRepository.findOne({
-      where: { id: churchId },
-    });
-    if (!church) return { message: 'Church not found, status: 404' };
+
+    if(id != '0'){
+        church = await this.churchRepository.findOne({
+        where: { id: churchId },
+      });
+      if (!church) return { message: 'Church not found, status: 404' };
+    }
 
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -246,7 +250,9 @@ export class UserService {
       user.fkRoleId.name === 'admin' ||
       user.fkRoleId.name === 'super-admin'
     ) {
-      if (id === 'ALL') {
+      if (user.viewAdminChurches != 'ALL' && id == '0') {
+        user.viewAdminChurches = 'ALL';
+      } else if (id === 'ALL') {
         return {
           message: 'You cannot add if you have all churches with ALL tag',
           status: 403,
@@ -264,9 +270,9 @@ export class UserService {
           } else {
             user.viewAdminChurches = church.id.toString();
           }
-          updatedUser = await this.userRepository.update(userId, user);
         }
       }
+      updatedUser = await this.userRepository.update(userId, user);
       const { password, createdAt, updatedAt, ...rest } = updatedUser;
       rest.status = 200;
       return rest;
