@@ -63,7 +63,7 @@ export class UserController {
 
   @Patch('admin-viewer-from-user/:id/:idUser')
   updateAdminViewerChurchFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
-    return this.userService.updateAdminViewerChurchFromUser(+id, idUser);
+    return this.userService.updateAdminViewerChurchFromUser(id, idUser);
   }
 
   @Delete(':id')
