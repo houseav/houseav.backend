@@ -188,7 +188,7 @@ export class UserService {
       }
       return churches;
     } else {
-      return { message: 'No churches to show' };
+      return { status: 404, message: 'No churches to show' };
     }
   }
 
@@ -258,8 +258,12 @@ export class UserService {
         ) {
           return { message: 'Church already in your group view', status: 403 };
         } else {
-          user.viewAdminChurches +=
-            (user.viewAdminChurches ? ',' : '') + church.id.toString();
+          if (user.viewAdminChurches) {
+            user.viewAdminChurches +=
+              (user.viewAdminChurches ? ',' : '') + church.id.toString();
+          } else {
+            user.viewAdminChurches = church.id.toString();
+          }
           updatedUser = await this.userRepository.update(userId, user);
         }
       }
@@ -290,7 +294,7 @@ export class UserService {
       user.fkRoleId.name === 'admin' ||
       user.fkRoleId.name === 'super-admin'
     ) {
-      if (id === 'ALL') {
+      if (id === 'ALL' || +id == 0) {
         user.viewAdminChurches = null;
         updatedUser = await this.userRepository.update(userId, user);
       } else {
@@ -302,6 +306,7 @@ export class UserService {
             .split(',')
             .filter((item) => item !== id)
             .join(',');
+          if (user.viewAdminChurches == '') user.viewAdminChurches = null;
         } else {
           return { message: 'Church ID not found', status: 404 };
         }
