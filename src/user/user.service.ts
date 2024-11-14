@@ -5,7 +5,10 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
-import { QueueRegister } from '../queue-user-registration/entities/queue-register.entity';
+import {
+  AdminVerifier,
+  QueueRegister,
+} from '../queue-user-registration/entities/queue-register.entity';
 import { Church } from 'src/church/entities/church.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
@@ -14,6 +17,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { AnyPtrRecord } from 'dns';
+import e from 'express';
 
 @Injectable()
 export class UserService {
@@ -183,9 +188,142 @@ export class UserService {
       }
       return churches;
     } else {
-      return { message: 'No churches to show' };
+      return { status: 404, message: 'No churches to show' };
+    }
+  }
+
+  async getUsersByAdminViewerOnQueueRegister(
+    id: string,
+  ): Promise<User[] | any> {
+    const userNotAuth = { message: 'User not autorized', status: 401 };
+    const idUser = +id;
+    const user = await this.userRepository.findOne({
+      where: { id: idUser },
+      relations: { fkRoleId: true, fkQueueRegisterId: true },
+    });
+    if (!user) return { message: 'User not found', status: 404 };
+    if (user.fkRoleId.name == 'admin' || user.fkRoleId.name == 'super-admin') {
+      if (user.fkQueueRegisterId.adminVerifier == AdminVerifier.SUPER_ADMIN) {
+        const users = await this.userRepository.find({
+          relations: {
+            fkRoleId: true,
+            fkQueueRegisterId: true,
+          },
+        });
+        return users.map((user) => {
+          const { password, createdAt, updatedAt, ...rest } = user;
+          return rest;
+        });
+      } else {
+        return userNotAuth;
+      }
+    } else {
+      return userNotAuth;
+    }
+  }
+
+  async updateAdminViewerChurchFromUser(
+    id: string,
+    idUser: string,
+  ): Promise<User | any> {
+    const userNotAuth = { message: 'User not authorized', status: 401 };
+    const userId = +idUser;
+    const churchId = +id;
+    let church;
+    let updatedUser;
+
+
+    if(id != '0'){
+        church = await this.churchRepository.findOne({
+        where: { id: churchId },
+      });
+      if (!church) return { message: 'Church not found, status: 404' };
     }
 
-    return { message: 'No churches to show' };
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { fkRoleId: true, fkQueueRegisterId: true },
+    });
+    if (!user) return { message: 'User not found', status: 404 };
+
+    if (
+      user.fkRoleId.name === 'admin' ||
+      user.fkRoleId.name === 'super-admin'
+    ) {
+      if (user.viewAdminChurches != 'ALL' && id == '0') {
+        user.viewAdminChurches = 'ALL';
+      } else if (id === 'ALL') {
+        return {
+          message: 'You cannot add if you have all churches with ALL tag',
+          status: 403,
+        };
+      } else {
+        if (
+          user.viewAdminChurches &&
+          user.viewAdminChurches.split(',').includes(id)
+        ) {
+          return { message: 'Church already in your group view', status: 403 };
+        } else {
+          if (user.viewAdminChurches) {
+            user.viewAdminChurches +=
+              (user.viewAdminChurches ? ',' : '') + church.id.toString();
+          } else {
+            user.viewAdminChurches = church.id.toString();
+          }
+        }
+      }
+      updatedUser = await this.userRepository.update(userId, user);
+      const { password, createdAt, updatedAt, ...rest } = updatedUser;
+      rest.status = 200;
+      return rest;
+    } else {
+      return userNotAuth;
+    }
+  }
+
+  async deleteAdminViewerChurchFromUser(
+    id: string,
+    idUser: string,
+  ): Promise<User | any> {
+    const userNotAuth = { message: 'User not authorized', status: 401 };
+    const userId = +idUser;
+    let updatedUser;
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { fkRoleId: true, fkQueueRegisterId: true },
+    });
+
+    if (!user) return { message: 'User not found', status: 404 };
+
+    if (
+      user.fkRoleId.name === 'admin' ||
+      user.fkRoleId.name === 'super-admin'
+    ) {
+      if (id === 'ALL' || +id == 0) {
+        user.viewAdminChurches = null;
+        updatedUser = await this.userRepository.update(userId, user);
+      } else {
+        if (
+          user.viewAdminChurches &&
+          user.viewAdminChurches.split(',').includes(id)
+        ) {
+          user.viewAdminChurches = user.viewAdminChurches
+            .split(',')
+            .filter((item) => item !== id)
+            .join(',');
+          if (user.viewAdminChurches == '') user.viewAdminChurches = null;
+        } else {
+          return { message: 'Church ID not found', status: 404 };
+        }
+
+        updatedUser = await this.userRepository.update(userId, user);
+      }
+      const { password, createdAt, updatedAt, ...rest } = updatedUser;
+      rest.status = 200;
+      return rest;
+    } else {
+      return userNotAuth;
+    }
   }
 }

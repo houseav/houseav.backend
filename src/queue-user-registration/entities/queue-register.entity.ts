@@ -10,6 +10,11 @@ import {
 import { User } from '../../user/entities/user.entity';
 import { ReferenceLetter } from '../../reference-letter/entities/reference-letter.entity';
 
+export enum AdminVerifier {
+  ADMIN = 'admin',
+  SUPER_ADMIN = 'super-admin',
+}
+
 @Entity('Queue-Register')
 export class QueueRegister {
   @PrimaryGeneratedColumn()
@@ -18,8 +23,16 @@ export class QueueRegister {
   @Column({ nullable: false, default: false })
   verified: boolean;
 
-  @Column({ nullable: true })
-  adminVerifier?: string;
+  /**
+   *
+   * @adminVerifier will define what is able to see in the admin views
+   * it can be:
+   * - admin
+   * - super-admin
+   *
+   */
+  @Column({ type: 'enum', enum: AdminVerifier, nullable: true })
+  adminVerifier?: AdminVerifier;
 
   @OneToOne(() => User, (user) => user.fkQueueRegisterId)
   @JoinColumn([

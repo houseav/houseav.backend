@@ -52,10 +52,10 @@ import { DatabaseInitService } from './database/init.database';
         return {
           type: 'postgres',
           url: configService.get<string>('DATABASE_URI'),
-          host: configService.get<string>('DATABASE_HOST'),
-          database: configService.get<string>('DATABASE_NAME'),
-          username: configService.get<string>('DATABASE_USERNAME'),
-          password: configService.get<string>('DATABASE_PASSWORD'),
+          // host: configService.get<string>('DATABASE_HOST'),
+          // database: configService.get<string>('DATABASE_NAME'),
+          // username: configService.get<string>('DATABASE_USERNAME'),
+          // password: configService.get<string>('DATABASE_PASSWORD'),
           entities: [
             Role,
             Banner,

@@ -5,7 +5,10 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { Church } from 'src/church/entities/church.entity';
-import { QueueRegister } from 'src/queue-user-registration/entities/queue-register.entity';
+import {
+  AdminVerifier,
+  QueueRegister,
+} from 'src/queue-user-registration/entities/queue-register.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { config } from 'dotenv';
 import { Policy } from 'src/policy/entities/policy.entity';
@@ -77,7 +80,7 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     // Create QueueRegister
     const queueRegister = new QueueRegister();
     queueRegister.verified = true;
-    queueRegister.adminVerifier = 'admin';
+    queueRegister.adminVerifier = AdminVerifier.ADMIN;
     queueRegister.createdAt = new Date('2024-09-24 18:57:52.258');
     queueRegister.updatedAt = new Date('2024-09-24 18:57:52.258');
     await queryRunner.manager.save(queueRegister);

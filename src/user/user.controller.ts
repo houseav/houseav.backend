@@ -33,8 +33,13 @@ export class UserController {
     return await this.userService.getChurchesFromViewAdminChurches(+id);
   }
 
+  @Get('/get-users-admin-viewers/:id')
+  getUsersByAdminViewerOnQueueRegister(@Param('id') id: string) {
+    return this.userService.getUsersByAdminViewerOnQueueRegister(id);
+  }
+
   @Get()
-  getUsersOnQueueRegistration() {
+  getUsers() {
     return this.userService.findAll();
   }
 
@@ -56,8 +61,18 @@ export class UserController {
     return this.userService.update(+id, updateUserDto);
   }
 
+  @Patch('admin-viewer-from-user/:id/:idUser')
+  updateAdminViewerChurchFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
+    return this.userService.updateAdminViewerChurchFromUser(id, idUser);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+
+  @Delete('admin-viewer-from-user/:id/:idUser')
+  deleteAdminViewerChurchFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
+    return this.userService.deleteAdminViewerChurchFromUser(id, idUser);
+  } 
 }

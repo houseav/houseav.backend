@@ -26,7 +26,7 @@ export class MailgunService {
         subject: '[Houseav] Hello There!',
         html: alert,
       });
-
+      console.log(`[INFO] email sent: ${JSON.stringify(msg)}`);
       return msg;
     } catch (err) {
       console.error(err);
