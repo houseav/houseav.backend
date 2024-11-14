@@ -192,34 +192,18 @@ export class UserService {
     }
   }
 
-  async getUsersByAdminViewerOnQueueRegister(
-    id: string,
-  ): Promise<User[] | any> {
-    const userNotAuth = { message: 'User not autorized', status: 401 };
-    const idUser = +id;
-    const user = await this.userRepository.findOne({
-      where: { id: idUser },
-      relations: { fkRoleId: true, fkQueueRegisterId: true },
+  async getUsersByAdminViewerOnQueueRegister(): Promise<User[] | any> {
+    // TODO check auth Bearer tkn
+    const users = await this.userRepository.find({
+      relations: {
+        fkRoleId: true,
+        fkQueueRegisterId: true,
+      },
     });
-    if (!user) return { message: 'User not found', status: 404 };
-    if (user.fkRoleId.name == 'admin' || user.fkRoleId.name == 'super-admin') {
-      if (user.fkQueueRegisterId.adminVerifier == AdminVerifier.SUPER_ADMIN) {
-        const users = await this.userRepository.find({
-          relations: {
-            fkRoleId: true,
-            fkQueueRegisterId: true,
-          },
-        });
-        return users.map((user) => {
-          const { password, createdAt, updatedAt, ...rest } = user;
-          return rest;
-        });
-      } else {
-        return userNotAuth;
-      }
-    } else {
-      return userNotAuth;
-    }
+    return users.map((user) => {
+      const { password, createdAt, updatedAt, ...rest } = user;
+      return rest;
+    });
   }
 
   async updateAdminViewerChurchFromUser(

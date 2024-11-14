@@ -33,9 +33,9 @@ export class UserController {
     return await this.userService.getChurchesFromViewAdminChurches(+id);
   }
 
-  @Get('/get-users-admin-viewers/:id')
-  getUsersByAdminViewerOnQueueRegister(@Param('id') id: string) {
-    return this.userService.getUsersByAdminViewerOnQueueRegister(id);
+  @Get('/get-users-admin-viewers')
+  getUsersByAdminViewerOnQueueRegister() {
+    return this.userService.getUsersByAdminViewerOnQueueRegister();
   }
 
   @Get()
