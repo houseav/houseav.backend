@@ -8,6 +8,7 @@ import { Public } from 'src/decorators/public.decorator';
 import { NextFunction } from 'express';
 import { User } from 'src/user/entities/user.entity';
 import { UserRegistrationDto } from 'src/user/dto/user-registration.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,6 +24,10 @@ export class AuthController {
     return this.usersService.create(registerUserDto);
   }
 
+  @Throttle({
+    short: { limit: 2, ttl: 1000 },
+    long: { limit: 20, ttl: 60000 },
+  })
   @Public()
   @Post('sign-in')
   async signIn(@Body() signInDto: SignInDto) {

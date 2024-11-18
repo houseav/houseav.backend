@@ -15,7 +15,16 @@ export class HistorySession {
   id?: number;
 
   @Column({ nullable: true })
-  token: string;
+  access_token: string;
+
+  @Column({ nullable: true })
+  refresh_token: string;
+
+  @Column({ nullable: true })
+  access_token_expiresAt: Date;
+
+  @Column({ nullable: true })
+  refresh_token_expiresAt: Date;
 
   @Column({ default: false, nullable: false })
   active: boolean;

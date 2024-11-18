@@ -8,6 +8,7 @@ import { Request, Response, NextFunction } from 'express';
 import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as ms from 'ms';
 @Injectable()
 export class AuthService {
   constructor(
@@ -30,13 +31,53 @@ export class AuthService {
       throw new UnauthorizedException('Invalid username or password');
     }
 
-    // Invalidate jwt
+    const userHistorySessions = await this.historySessionRepository.findOne({
+      where: { fkUserId: user },
+      order: { createdAt: 'DESC' },
+    });
+
+    if (userHistorySessions) {
+      // Invalidate jwt
+      userHistorySessions.active = false;
+      userHistorySessions.invalidateBy = 'User action';
+      userHistorySessions.invalidateReason = 'User Login';
+      await this.historySessionRepository.update(
+        userHistorySessions.id,
+        userHistorySessions,
+      );
+    }
 
     const payload = { sub: user.id, email: user.email };
     const accessToken = await this.jwtService.signAsync(payload);
     const refresh_token = await this.generateRefreshToken(user.id, accessToken);
-    //Insert in history-session
 
+    const newHistorySession = new HistorySession();
+    newHistorySession.access_token = accessToken;
+    newHistorySession.refresh_token = refresh_token;
+    // Convert duration to milliseconds
+    const access_tokenDurationInMs = ms(process.env.AUTH_DURATION);
+    const refresh_tokenDurationInMs = ms(process.env.AUTH_DURATION_REFRESH);
+    if (
+      access_tokenDurationInMs === undefined ||
+      refresh_tokenDurationInMs === undefined
+    ) {
+      throw new Error('Invalid expire duration format');
+    }
+    const currentTime = new Date();
+    const expire_access_token = new Date(
+      currentTime.getTime() + access_tokenDurationInMs,
+    );
+    const expire_refresh_token = new Date(
+      currentTime.getTime() + refresh_tokenDurationInMs,
+    );
+    newHistorySession.access_token_expiresAt = expire_access_token;
+    newHistorySession.refresh_token_expiresAt = expire_refresh_token;
+    newHistorySession.active = true;
+    newHistorySession.fkUserId = user;
+    // TODO to add
+    // UserAgent
+    // IpAddress
+    await this.historySessionRepository.save(newHistorySession);
     user.password = null;
     return { access_token: accessToken, refresh_token: refresh_token, user };
   }
