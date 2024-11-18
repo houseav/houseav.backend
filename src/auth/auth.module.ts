@@ -30,6 +30,9 @@ import { Church } from 'src/church/entities/church.entity';
 import { ChurchService } from 'src/church/church.service';
 import { ChurchController } from 'src/church/church.controller';
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
+import { HistorySessionsService } from 'src/history-sessions/history-sessions.service';
+import { HistorySessionsController } from 'src/history-sessions/history-sessions.controller';
 
 @Module({
   imports: [
@@ -45,6 +48,7 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
       Policy,
       ReferenceLetter,
       Church,
+      HistorySession
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -72,6 +76,7 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
     ReferenceLetterService,
     ChurchService,
     MailgunService,
+    HistorySessionsService,
   ],
   exports: [AuthService],
   controllers: [
@@ -83,6 +88,7 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
     PolicyController,
     ReferenceLetterController,
     ChurchController,
+    HistorySessionsController,
   ],
 })
 export class AuthModule {}

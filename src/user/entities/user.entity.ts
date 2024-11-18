@@ -16,6 +16,7 @@ import { Church } from 'src/church/entities/church.entity';
 import { House } from 'src/house/entities/house.entity';
 import { QueueRegister } from '../../queue-user-registration/entities/queue-register.entity';
 import { ForgotPassword } from 'src/forgot-password/entities/forgot-password.entity';
+import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
 
 @Entity('Users')
 export class User {
@@ -137,4 +138,10 @@ export class User {
    */
   @Column({ nullable: true })
   viewAdminChurches?: string;
+
+  @OneToMany(
+    () => HistorySession,
+    (session: HistorySession) => session.fkUserId,
+  )
+  fkHistorySessions: HistorySession[];
 }

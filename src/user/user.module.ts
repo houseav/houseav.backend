@@ -19,6 +19,7 @@ import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.
 import { ReferenceLetterController } from 'src/reference-letter/reference-letter.controller';
 import { ReferenceLetterService } from 'src/reference-letter/reference-letter.service';
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
       QueueRegister,
       Policy,
       ReferenceLetter,
+      HistorySession
     ]),
     QueueRegister,
     Role,
