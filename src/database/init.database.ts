@@ -80,7 +80,7 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     // Create QueueRegister
     const queueRegister = new QueueRegister();
     queueRegister.verified = true;
-    queueRegister.adminVerifier = AdminVerifier.ADMIN;
+    queueRegister.adminVerifier = AdminVerifier.SUPER_ADMIN;
     queueRegister.createdAt = new Date('2024-09-24 18:57:52.258');
     queueRegister.updatedAt = new Date('2024-09-24 18:57:52.258');
     await queryRunner.manager.save(queueRegister);
@@ -100,7 +100,10 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     referenceLetter.fkQueueRegisterId = queueRegister;
     referenceLetter.createdAt = new Date('2024-09-24 18:57:52.258');
     referenceLetter.updatedAt = new Date('2024-09-24 18:57:52.258');
-    await queryRunner.manager.save(referenceLetter);
+    const referenceLetterSaved = await queryRunner.manager.save(referenceLetter);
+
+    queueRegister.fkReferenceLetterId = referenceLetterSaved;
+    await queryRunner.manager.save(queueRegister);
 
     // Create User
     const user = new User();
@@ -113,9 +116,10 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     user.password = process.env.ADMIN_PSWD;
     user.createdAt = new Date('2024-09-24 18:57:52.258');
     user.updatedAt = new Date('2024-09-24 18:57:52.258');
-    user.fkRoleId = await queryRunner.manager.findOne(Role, {
+    const role = await queryRunner.manager.findOne(Role, {
       where: { name: 'super-admin' },
     });
+    user.fkRoleId = role;
     const churches = await queryRunner.manager.find(Church, {
       order: { id: 'ASC' },
       skip: 1,
@@ -124,6 +128,8 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     user.fkChurchId = churches[0];
     user.fkQueueRegisterId = queueRegister;
     user.viewAdminChurches = 'ALL';
-    await queryRunner.manager.save(user);
+    const userSaved = await queryRunner.manager.save(user);
+    queueRegister.fkUserId = userSaved;
+    await queryRunner.manager.save(userSaved);
   }
 }

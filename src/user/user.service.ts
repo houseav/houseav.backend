@@ -17,8 +17,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 
 import { MailgunService } from 'src/mailgun/mailgun.service';
-import { AnyPtrRecord } from 'dns';
-import e from 'express';
 
 @Injectable()
 export class UserService {

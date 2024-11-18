@@ -36,6 +36,8 @@ import { MailgunModule } from './mailgun/mailgun.module';
 import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
 import { ForgotPassword } from './forgot-password/entities/forgot-password.entity';
 import { DatabaseInitService } from './database/init.database';
+import { HistorySessionsModule } from './history-sessions/history-sessions.module';
+import { HistorySession } from './history-sessions/entities/history-session.entity';
 
 @Module({
   imports: [
@@ -67,6 +69,7 @@ import { DatabaseInitService } from './database/init.database';
             ReferenceLetter,
             Policy,
             ForgotPassword,
+            HistorySession,
           ],
           synchronize: true,
           logging: true,
@@ -93,6 +96,7 @@ import { DatabaseInitService } from './database/init.database';
     PolicyModule,
     MailgunModule,
     ForgotPasswordModule,
+    HistorySessionsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -12,7 +12,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 
@@ -38,14 +38,9 @@ export class UserController {
     return this.userService.getUsersByAdminViewerOnQueueRegister();
   }
 
+  @ApiBearerAuth()
   @Get()
   getUsers() {
-    return this.userService.findAll();
-  }
-
-  @Public()
-  @Get()
-  findAll() {
     return this.userService.findAll();
   }
 
@@ -62,7 +57,10 @@ export class UserController {
   }
 
   @Patch('admin-viewer-from-user/:id/:idUser')
-  updateAdminViewerChurchFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
+  updateAdminViewerChurchFromUser(
+    @Param('id') id: string,
+    @Param('idUser') idUser: string,
+  ) {
     return this.userService.updateAdminViewerChurchFromUser(id, idUser);
   }
 
@@ -72,7 +70,10 @@ export class UserController {
   }
 
   @Delete('admin-viewer-from-user/:id/:idUser')
-  deleteAdminViewerChurchFromUser(@Param('id') id: string, @Param('idUser') idUser: string) {
+  deleteAdminViewerChurchFromUser(
+    @Param('id') id: string,
+    @Param('idUser') idUser: string,
+  ) {
     return this.userService.deleteAdminViewerChurchFromUser(id, idUser);
-  } 
+  }
 }
