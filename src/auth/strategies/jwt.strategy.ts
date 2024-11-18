@@ -13,6 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: process.env.AUTH_SECRET || 'secret',
     });
+    this.usersService = usersService;
   }
 
   async validate(payload: JwtPayload): Promise<any> {
@@ -20,6 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     console.log('payload');
     console.log(payload);
     // const user = await this.usersService.findOne(payload.sub);
+    // TODO change
     const user = '';
     if (!user) {
       this.logger.error('User not found');

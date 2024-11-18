@@ -14,7 +14,7 @@ export class AuthService {
     private readonly usersService: UserService,
     private readonly jwtService: JwtService,
     @InjectRepository(HistorySession)
-    private historySessionRepository: Repository<HistorySession>
+    private historySessionRepository: Repository<HistorySession>,
   ) {}
 
   async signIn(signInDto: SignInDto): Promise<SignInResponse> {
@@ -30,12 +30,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid username or password');
     }
 
+    // Invalidate jwt
+
     const payload = { sub: user.id, email: user.email };
     const accessToken = await this.jwtService.signAsync(payload);
-
+    const refresh_token = await this.generateRefreshToken(user.id, accessToken);
+    //Insert in history-session
 
     user.password = null;
-    return { access_token: accessToken, user };
+    return { access_token: accessToken, refresh_token: refresh_token, user };
   }
 
   async signOut(req: Request, res: Response, next: NextFunction) {
@@ -45,5 +48,35 @@ export class AuthService {
     } catch (error) {
       next(error);
     }
+  }
+
+  async generateRefreshToken(authUserId: number, currentRefreshToken?: string) {
+    console.log(
+      'auth.services.js::generateRefreshTkn:process.env',
+      JSON.stringify({
+        secret: process.env.AUTH_SECRET_REFRESH,
+        expiresIn: process.env.AUTH_DURATION_REFRESH,
+      }),
+    ); //TODO remove
+    const newRefreshToken = this.jwtService.sign(
+      { sub: authUserId },
+      {
+        secret: process.env.AUTH_SECRET_REFRESH,
+        expiresIn: process.env.AUTH_DURATION_REFRESH,
+      },
+    );
+
+    if (currentRefreshToken) {
+      if (await this.isTokenBlackListed(currentRefreshToken, authUserId)) {
+        throw new UnauthorizedException('Invalid refresh token.');
+      }
+    }
+
+    return newRefreshToken;
+  }
+
+  private isTokenBlackListed(token: string, userId: number) {
+    // check if the token is invalidated
+    return false;
   }
 }
