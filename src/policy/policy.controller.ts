@@ -1,8 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { PolicyService } from './policy.service';
 import { CreatePolicyDto } from './dto/create-policy.dto';
 import { UpdatePolicyDto } from './dto/update-policy.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorators/public.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
+@ApiTags('policy')
 @Controller('policy')
 export class PolicyController {
   constructor(private readonly policyService: PolicyService) {}
@@ -12,11 +17,13 @@ export class PolicyController {
     return this.policyService.create(createPolicyDto);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.policyService.findAll();
   }
-
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.policyService.findOne(+id);

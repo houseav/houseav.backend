@@ -1,6 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { CreatePolicyDto } from './dto/create-policy.dto';
 import { UpdatePolicyDto } from './dto/update-policy.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Public } from 'src/decorators/public.decorator';
+
 
 @Injectable()
 export class PolicyService {
@@ -9,6 +14,7 @@ export class PolicyService {
   }
 
   findAll() {
+    console.log('--test--');
     return `This action returns all policy`;
   }
 
