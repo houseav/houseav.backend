@@ -1,3 +1,4 @@
+import { Length, Matches } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Church } from 'src/church/entities/church.entity';
@@ -23,6 +24,12 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({ example: `password` })
+  @IsNotEmpty()
+  // @IsString()
+  // @Length(8, 100)
+  // @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+  //   message: 'password too weak',
+  // }) //TODO uncomment
   password?: string;
 
   @ApiProperty({

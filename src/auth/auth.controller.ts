@@ -1,14 +1,15 @@
-import { Body, Controller, Get, Next, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { SignInDto } from '../user/dto/sign-in.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { SignUpDto } from 'src/user/dto/sign-up.dto';
-import { Public } from 'src/decorators/public.decorator';
-import { NextFunction } from 'express';
-import { User } from 'src/user/entities/user.entity';
 import { UserRegistrationDto } from 'src/user/dto/user-registration.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorators/public.decorator';
 import { Throttle } from '@nestjs/throttler';
+import {
+  LoginRefreshDto,
+  LoginRefreshResponseDto,
+} from 'src/user/dto/login-refresh.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,6 +33,14 @@ export class AuthController {
   @Post('sign-in')
   async signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
+  }
+
+  @Public()
+  @Post('refresh')
+  async loginRefresh(
+    @Body() loginRefreshDto: LoginRefreshDto,
+  ): Promise<LoginRefreshResponseDto> {
+    return await this.authService.refreshAccessToken(loginRefreshDto);
   }
 
   @Public()

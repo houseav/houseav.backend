@@ -9,9 +9,16 @@ import { HistorySession } from 'src/history-sessions/entities/history-session.en
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as ms from 'ms';
+import {
+  LoginRefreshDto,
+  LoginRefreshResponseDto,
+} from 'src/user/dto/login-refresh.dto';
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class AuthService {
   constructor(
+    private config: ConfigService,
     private readonly usersService: UserService,
     private readonly jwtService: JwtService,
     @InjectRepository(HistorySession)
@@ -45,11 +52,12 @@ export class AuthService {
         userHistorySessions.id,
         userHistorySessions,
       );
+    } else {
+      console.warn('Warning: history session not found');
     }
 
-    const payload = { sub: user.id, email: user.email };
-    const accessToken = await this.jwtService.signAsync(payload);
-    const refresh_token = await this.generateRefreshToken(user.id, accessToken);
+    const accessToken = await this.generateAccessToken(user);
+    const refresh_token = await this.generateRefreshToken(user, accessToken);
 
     const newHistorySession = new HistorySession();
     newHistorySession.access_token = accessToken;
@@ -91,29 +99,129 @@ export class AuthService {
     }
   }
 
-  async generateRefreshToken(authUserId: number, currentRefreshToken?: string) {
-    console.log(
-      'auth.services.js::generateRefreshTkn:process.env',
-      JSON.stringify({
-        secret: process.env.AUTH_SECRET_REFRESH,
-        expiresIn: process.env.AUTH_DURATION_REFRESH,
-      }),
-    ); //TODO remove
-    const newRefreshToken = this.jwtService.sign(
-      { sub: authUserId },
-      {
-        secret: process.env.AUTH_SECRET_REFRESH,
-        expiresIn: process.env.AUTH_DURATION_REFRESH,
-      },
-    );
+  async refreshAccessToken(
+    loginRefreshDto: LoginRefreshDto,
+  ): Promise<LoginRefreshResponseDto> {
+    try {
+      if (loginRefreshDto.refreshToken) {
+        let refreshJwtVerified;
+        try {
+          refreshJwtVerified = await this.jwtService.verify(
+            loginRefreshDto.refreshToken,
+            {
+              secret: this.config.get('AUTH_SECRET_REFRESH'),
+            },
+          );
+
+          const user: User = await this.usersService.findByEmail(
+            refreshJwtVerified.email,
+          );
+          if (!user) {
+            throw new UnauthorizedException('Invalid user payload');
+          }
+
+          const access_token = await this.generateAccessToken(user);
+          const refresh_token = await this.generateRefreshToken(user);
+
+          const userHistorySessions =
+            await this.historySessionRepository.findOne({
+              where: { fkUserId: user },
+              order: { createdAt: 'DESC' },
+            });
+
+          if (userHistorySessions && userHistorySessions.active) {
+            // Invalidate jwt
+            userHistorySessions.access_token = access_token;
+            userHistorySessions.refresh_token = refresh_token;
+            userHistorySessions.active = false;
+            userHistorySessions.invalidateBy = 'User refresh-token action';
+            userHistorySessions.invalidateReason = 'User generate new tokens';
+            await this.historySessionRepository.update(
+              userHistorySessions.id,
+              userHistorySessions,
+            );
+          } else {
+            throw new UnauthorizedException('Session not found');
+          }
+
+          return { access_token, refresh_token };
+        } catch (error) {
+          if (error.name == 'TokenExpiredError') {
+            // update history session with error
+            const refreshJwtDecoded = await this.jwtService.decode(
+              loginRefreshDto.refreshToken,
+            );
+            const user: User = await this.usersService.findByEmail(
+              refreshJwtDecoded.email,
+            );
+            if (!user) {
+              throw new UnauthorizedException('Invalid user payload');
+            }
+
+            const userHistorySessions =
+              await this.historySessionRepository.findOne({
+                where: { fkUserId: user },
+                order: { createdAt: 'DESC' },
+              });
+
+            if (userHistorySessions && userHistorySessions.active) {
+              // Invalidate jwt
+              userHistorySessions.active = false;
+              userHistorySessions.invalidateBy = 'User refresh-token action';
+              userHistorySessions.invalidateReason =
+                'User to tempt to refresh-token, but got refresh-token expired';
+              await this.historySessionRepository.update(
+                userHistorySessions.id,
+                userHistorySessions,
+              );
+            } else {
+              throw new UnauthorizedException('Session not found');
+            }
+          } else {
+            console.warn('Warning: history session not found');
+          }
+        }
+      }
+      throw new UnauthorizedException('User Unauthorized');
+    } catch (error) {
+      console.log('Error occurred while doing refreshAccessToken', error);
+      throw new Error('Error occurred while refresh-token, ' + error.message);
+    }
+  }
+
+  async generateRefreshToken(
+    user: User,
+    currentRefreshToken?: string,
+  ): Promise<string> {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.fkRoleId.id,
+      type: 'refresh',
+    };
+    const newRefreshToken = this.jwtService.sign(payload, {
+      secret: process.env.AUTH_SECRET_REFRESH,
+      expiresIn: process.env.AUTH_DURATION_REFRESH,
+    });
 
     if (currentRefreshToken) {
-      if (await this.isTokenBlackListed(currentRefreshToken, authUserId)) {
+      if (await this.isTokenBlackListed(currentRefreshToken, user.id)) {
         throw new UnauthorizedException('Invalid refresh token.');
       }
     }
 
     return newRefreshToken;
+  }
+
+  async generateAccessToken(user: User): Promise<string> {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.fkRoleId.id,
+      type: 'access',
+    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    return accessToken;
   }
 
   private isTokenBlackListed(token: string, userId: number) {

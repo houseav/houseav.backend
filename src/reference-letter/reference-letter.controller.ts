@@ -8,12 +8,16 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ReferenceLetterService } from './reference-letter.service';
 import { CreateReferenceLetterDto } from './dto/create-reference-letter.dto';
 import { UpdateReferenceLetterDto } from './dto/update-reference-letter.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
+@ApiBearerAuth('access-token')
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('reference-letter')
 @Controller('reference-letter')
 export class ReferenceLetterController {

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { QueueUserRegistrationService } from './queue-user-registration.service';
 import { CreateQueueUserRegistrationDto } from './dto/create-queue-user-registration.dto';
@@ -13,8 +14,10 @@ import { UpdateQueueUserRegistrationDto } from './dto/update-queue-user-registra
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateQueueUserRegistrationVerifyDto } from './dto/update-queue-user-registration-verify.dto';
 import { CreateChurchDto } from 'src/church/dto/create-church.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiBearerAuth('access-token')
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('queue-user-registration')
 @Controller('queue-user-registration')
 export class QueueUserRegistrationController {

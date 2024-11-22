@@ -1,13 +1,17 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MailgunService } from './mailgun.service';
 import { SendEmailDto } from './dto/sendemail-mailgun.dto';
 import { ForgotPasswordDto } from './dto/forgotpassword-mailgun.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('mailgun')
 export class MailgunController {
   constructor(private readonly mailgunService: MailgunService) {}
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Post('/send-email')
   @ApiOperation({ summary: 'Send an email' })
   @ApiResponse({
@@ -19,6 +23,7 @@ export class MailgunController {
     return await this.mailgunService.sendEmail(sendEmailDto.email);
   }
 
+  @Public()
   @Post('forgot-password')
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,

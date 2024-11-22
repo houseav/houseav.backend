@@ -1,10 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { PolicyService } from './policy.service';
 import { CreatePolicyDto } from './dto/create-policy.dto';
 import { UpdatePolicyDto } from './dto/update-policy.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('policy')
@@ -12,6 +19,8 @@ import { AuthGuard } from '@nestjs/passport';
 export class PolicyController {
   constructor(private readonly policyService: PolicyService) {}
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   create(@Body() createPolicyDto: CreatePolicyDto) {
     return this.policyService.create(createPolicyDto);
@@ -23,17 +32,23 @@ export class PolicyController {
   findAll() {
     return this.policyService.findAll();
   }
-  @Public()
+
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.policyService.findOne(+id);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePolicyDto: UpdatePolicyDto) {
     return this.policyService.update(+id, updatePolicyDto);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.policyService.remove(+id);

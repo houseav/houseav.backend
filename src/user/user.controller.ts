@@ -8,6 +8,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,7 +16,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public.decorator';
 import { UserRegistrationDto } from './dto/user-registration.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@ApiBearerAuth('access-token')
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('user')
 @Controller('user')
 export class UserController {
@@ -38,7 +42,6 @@ export class UserController {
     return this.userService.getUsersByAdminViewerOnQueueRegister();
   }
 
-  @ApiBearerAuth()
   @Get()
   getUsers() {
     return this.userService.findAll();

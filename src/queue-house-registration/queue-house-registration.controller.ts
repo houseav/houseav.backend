@@ -6,13 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { QueueHouseRegistrationService } from './queue-house-registration.service';
 import { CreateQueueHouseRegistrationDto } from './dto/create-queue-house-registration.dto';
 import { UpdateQueueHouseRegistrationDto } from './dto/update-queue-house-registration.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiBearerAuth('access-token')
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('queue-house-registration')
 @Controller('queue-house-registration')
 export class QueueHouseRegistrationController {

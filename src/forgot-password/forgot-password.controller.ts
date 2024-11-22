@@ -7,10 +7,13 @@ import {
   Delete,
   Query,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ForgotPasswordService } from './forgot-password.service';
 import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
 import { ForgotPasswordResponse } from './response/ForgotPasswordResponse';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('forgot-password')
 export class ForgotPasswordController {
@@ -40,16 +43,22 @@ export class ForgotPasswordController {
     return await this.forgotPasswordService.checkRequest(query);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.forgotPasswordService.findAll();
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.forgotPasswordService.findOne(+id);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.forgotPasswordService.remove(+id);

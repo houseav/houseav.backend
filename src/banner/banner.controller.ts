@@ -8,18 +8,22 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { BannerService } from './banner.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
-import { ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { Banner } from './entities/banner.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('banner')
 @Controller('banner')
 export class BannerController {
   constructor(private readonly bannerService: BannerService) {}
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @UsePipes(ValidationPipe)
   @ApiBody({ type: CreateBannerDto })
@@ -27,11 +31,15 @@ export class BannerController {
     return this.bannerService.create(createBannerDto);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll(): Promise<Banner[]> {
     return this.bannerService.findAll();
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiParam({
     name: 'id',
@@ -43,6 +51,8 @@ export class BannerController {
     return this.bannerService.findOne(+id);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   @UsePipes(ValidationPipe)
   @ApiParam({
@@ -56,6 +66,8 @@ export class BannerController {
     return this.bannerService.update(+id, updateBannerDto);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @ApiParam({
     name: 'id',

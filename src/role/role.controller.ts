@@ -6,14 +6,18 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Role } from './singleRole.module';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoleDto } from './dto/role.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@ApiBearerAuth('access-token')
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('role')
 @Controller('role')
 export class RoleController {
