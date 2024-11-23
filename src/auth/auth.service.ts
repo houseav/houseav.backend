@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as ms from 'ms';
 import {
+  AccessTokenDto,
   LoginRefreshDto,
   LoginRefreshResponseDto,
 } from 'src/user/dto/login-refresh.dto';
@@ -43,7 +44,7 @@ export class AuthService {
       order: { createdAt: 'DESC' },
     });
 
-    if (userHistorySessions) {
+    if (userHistorySessions && userHistorySessions.active) {
       // Invalidate jwt
       userHistorySessions.active = false;
       userHistorySessions.invalidateBy = 'User action';
@@ -53,7 +54,7 @@ export class AuthService {
         userHistorySessions,
       );
     } else {
-      console.warn('Warning: history session not found');
+      console.warn('Warning: history session active not found');
     }
 
     const accessToken = await this.generateAccessToken(user);
@@ -90,38 +91,99 @@ export class AuthService {
     return { access_token: accessToken, refresh_token: refresh_token, user };
   }
 
-  async signOut(req: Request, res: Response, next: NextFunction) {
+  async signOut(request: any): Promise<string> {
     try {
-      res.clearCookie('access_token');
-      res.status(200).json('User has been logged out!');
+      const authHeader = request.headers['authorization'];
+      const token = authHeader?.split(' ')[1];
+      const accessTokenJwtVerified = await this.jwtService.decode(token);
+      const user: User = await this.usersService.findByEmail(
+        accessTokenJwtVerified.email,
+      );
+      if (!user) {
+        throw new UnauthorizedException('Invalid user payload');
+      }
+
+      const userHistorySessions = await this.historySessionRepository.findOne({
+        where: { fkUserId: user },
+        order: { createdAt: 'DESC' },
+      });
+
+      if (userHistorySessions && userHistorySessions.active) {
+        // Invalidate jwt
+        userHistorySessions.active = false;
+        userHistorySessions.invalidateBy = 'User sign-out action';
+        userHistorySessions.invalidateReason = 'User sign-out';
+        await this.historySessionRepository.update(
+          userHistorySessions.id,
+          userHistorySessions,
+        );
+      } else {
+        throw new UnauthorizedException('Session not found');
+      }
+      return 'User signed-out with success';
     } catch (error) {
-      next(error);
+      throw new Error(`Error occured while sign-out, ${error.message}`);
     }
   }
 
   async refreshAccessToken(
     loginRefreshDto: LoginRefreshDto,
   ): Promise<LoginRefreshResponseDto> {
-    try {
-      if (loginRefreshDto.refreshToken) {
-        let refreshJwtVerified;
-        try {
-          refreshJwtVerified = await this.jwtService.verify(
-            loginRefreshDto.refreshToken,
-            {
-              secret: this.config.get('AUTH_SECRET_REFRESH'),
-            },
-          );
+    if (loginRefreshDto.refreshToken) {
+      let refreshJwtVerified;
+      try {
+        refreshJwtVerified = await this.jwtService.verify(
+          loginRefreshDto.refreshToken,
+          {
+            secret: this.config.get('AUTH_SECRET_REFRESH'),
+          },
+        );
 
+        const user: User = await this.usersService.findByEmail(
+          refreshJwtVerified.email,
+        );
+        if (!user) {
+          throw new UnauthorizedException('Invalid user payload');
+        }
+
+        const access_token = await this.generateAccessToken(user);
+        const refresh_token = await this.generateRefreshToken(user);
+
+        const userHistorySessions = await this.historySessionRepository.findOne(
+          {
+            where: { fkUserId: user },
+            order: { createdAt: 'DESC' },
+          },
+        );
+
+        if (userHistorySessions && userHistorySessions.active) {
+          // Invalidate jwt
+          userHistorySessions.access_token = access_token;
+          userHistorySessions.refresh_token = refresh_token;
+          userHistorySessions.active = true;
+          userHistorySessions.invalidateBy = 'User refresh-token action';
+          userHistorySessions.invalidateReason = 'User generate new tokens';
+          await this.historySessionRepository.update(
+            userHistorySessions.id,
+            userHistorySessions,
+          );
+        } else {
+          throw new UnauthorizedException('Session not found');
+        }
+
+        return { access_token, refresh_token };
+      } catch (error) {
+        if (error.name == 'TokenExpiredError') {
+          // update history session with error
+          const refreshJwtDecoded = await this.jwtService.decode(
+            loginRefreshDto.refreshToken,
+          );
           const user: User = await this.usersService.findByEmail(
-            refreshJwtVerified.email,
+            refreshJwtDecoded.email,
           );
           if (!user) {
             throw new UnauthorizedException('Invalid user payload');
           }
-
-          const access_token = await this.generateAccessToken(user);
-          const refresh_token = await this.generateRefreshToken(user);
 
           const userHistorySessions =
             await this.historySessionRepository.findOne({
@@ -131,62 +193,23 @@ export class AuthService {
 
           if (userHistorySessions && userHistorySessions.active) {
             // Invalidate jwt
-            userHistorySessions.access_token = access_token;
-            userHistorySessions.refresh_token = refresh_token;
             userHistorySessions.active = false;
             userHistorySessions.invalidateBy = 'User refresh-token action';
-            userHistorySessions.invalidateReason = 'User generate new tokens';
+            userHistorySessions.invalidateReason =
+              'User to tempt to refresh-token, but got refresh-token expired';
             await this.historySessionRepository.update(
               userHistorySessions.id,
               userHistorySessions,
             );
           } else {
-            throw new UnauthorizedException('Session not found');
+            throw new UnauthorizedException(`history session active not found`);
           }
-
-          return { access_token, refresh_token };
-        } catch (error) {
-          if (error.name == 'TokenExpiredError') {
-            // update history session with error
-            const refreshJwtDecoded = await this.jwtService.decode(
-              loginRefreshDto.refreshToken,
-            );
-            const user: User = await this.usersService.findByEmail(
-              refreshJwtDecoded.email,
-            );
-            if (!user) {
-              throw new UnauthorizedException('Invalid user payload');
-            }
-
-            const userHistorySessions =
-              await this.historySessionRepository.findOne({
-                where: { fkUserId: user },
-                order: { createdAt: 'DESC' },
-              });
-
-            if (userHistorySessions && userHistorySessions.active) {
-              // Invalidate jwt
-              userHistorySessions.active = false;
-              userHistorySessions.invalidateBy = 'User refresh-token action';
-              userHistorySessions.invalidateReason =
-                'User to tempt to refresh-token, but got refresh-token expired';
-              await this.historySessionRepository.update(
-                userHistorySessions.id,
-                userHistorySessions,
-              );
-            } else {
-              throw new UnauthorizedException('Session not found');
-            }
-          } else {
-            console.warn('Warning: history session not found');
-          }
+        } else {
+          console.warn('Warning: history session not found');
         }
       }
-      throw new UnauthorizedException('User Unauthorized');
-    } catch (error) {
-      console.log('Error occurred while doing refreshAccessToken', error);
-      throw new Error('Error occurred while refresh-token, ' + error.message);
     }
+    throw new UnauthorizedException('User Unauthorized');
   }
 
   async generateRefreshToken(

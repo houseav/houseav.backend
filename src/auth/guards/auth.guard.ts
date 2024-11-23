@@ -31,6 +31,7 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
+    console.log('token: ,', token);
     try {
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
@@ -38,7 +39,7 @@ export class AuthGuard implements CanActivate {
         secret: this.config.get<string>('AUTH_SECRET'),
       });
     } catch (e) {
-      console.log('Unable to verify jwt tkn ',e.message);
+      console.log('Unable to verify token', e.message);
       throw new UnauthorizedException();
     }
 
