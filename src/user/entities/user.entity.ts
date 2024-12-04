@@ -20,6 +20,29 @@ import { HistorySession } from 'src/history-sessions/entities/history-session.en
 
 @Entity('Users')
 export class User {
+  // constructor(
+  //   email: string,
+  //   username: string,
+  //   password: string,
+  //   avatar?: string,
+  //   prefix?: string,
+  //   number?: string,
+  //   social?: string,
+  //   fkRoleId?: Role,
+  //   fkChurchId?: Church,
+  // ) {
+  //   this.email = email;
+  //   this.username = username;
+  //   this.password = password;
+  //   this.avatar = avatar;
+  //   this.prefix = prefix;
+  //   this.number = number;
+  //   this.social = social;
+  //   this.fkRoleId = fkRoleId;
+  //   this.fkChurchId = fkChurchId;
+  // }
+  constructor(){}
+
   @PrimaryGeneratedColumn()
   id?: number;
 

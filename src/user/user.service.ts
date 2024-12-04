@@ -191,7 +191,6 @@ export class UserService {
   }
 
   async getUsersByAdminViewerOnQueueRegister(): Promise<User[] | any> {
-    // TODO check auth Bearer tkn
     const users = await this.userRepository.find({
       relations: {
         fkRoleId: true,
