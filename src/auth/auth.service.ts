@@ -4,13 +4,11 @@ import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from '../user/dto/sign-in.dto';
 import { User } from '../user/entities/user.entity';
 import { SignInResponse } from './responses/sign-in.response';
-import { Request, Response, NextFunction } from 'express';
 import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as ms from 'ms';
 import {
-  AccessTokenDto,
   LoginRefreshDto,
   LoginRefreshResponseDto,
 } from 'src/user/dto/login-refresh.dto';
@@ -138,6 +136,10 @@ export class AuthService {
             secret: this.config.get('AUTH_SECRET_REFRESH'),
           },
         );
+
+        if (!refreshJwtVerified) {
+          throw new UnauthorizedException('Unauthorized, inalid request');
+        }
 
         const user: User = await this.usersService.findByEmail(
           refreshJwtVerified.email,

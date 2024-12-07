@@ -31,7 +31,6 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
-    console.log('token: ,', token);
     try {
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
