@@ -15,6 +15,7 @@ import { CreateChurchDto } from './dto/create-church.dto';
 import { UpdateChurchDto } from './dto/update-church.dto';
 import { ApiTags, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { Public } from 'src/decorators/public.decorator';
 
 @ApiTags('church')
 @Controller('church')
@@ -30,8 +31,7 @@ export class ChurchController {
     return this.churchService.create(createChurchDto);
   }
 
-  @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
+  @Public()
   @Get()
   findAll() {
     return this.churchService.findAll();
