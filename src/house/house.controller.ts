@@ -12,13 +12,19 @@ import {
   Res,
   Next,
   UseGuards,
+  Req,
+  ExecutionContext,
 } from '@nestjs/common';
 import { HouseService } from './house.service';
 import { CreateHouseDto } from './dto/create-house.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Response, NextFunction, query } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/user/entities/user.entity';
+
+class RequestInterface extends Request {
+  user: User;
+}
 
 @ApiBearerAuth('access-token')
 @ApiTags('house')
@@ -67,16 +73,16 @@ export class HouseController {
     return this.houseService.findAll();
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
+  @Get('user')
+  async findUserHouses(@Req() req: RequestInterface) {
+    return await this.houseService.findUserHouses(req.user.id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.houseService.findOne(+id);
-  }
-
-  @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
-  @Get('user/:id')
-  async findUserHouses(@Param('id') id: string) {
-    return await this.houseService.findUserHouses(+id);
   }
 
   @ApiBearerAuth('access-token')

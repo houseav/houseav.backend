@@ -129,6 +129,26 @@ export class HouseService {
     }
   }
 
+  async findOneByUserTkn(idHouse: number): Promise<House | any> {
+    try {
+      console.log('House');
+      // Filter the user's houses to find the one with the matching idHouse
+      // const houseFounded = user.fkHouseId.find((house) => house.id === idHouse);
+
+      // if (houseFounded.fkQueueHouseRegistrationId.verified == false) {
+      //   return { verified: false, message: 'House not verified yet' };
+      // }
+
+      // if (!houseFounded) {
+      //   throw new Error('House not found for this user!');
+      // }
+
+      // return houseFounded;
+    } catch (error) {
+      console.error('Error while findByUser: ' + error);
+    }
+  }
+
   async update(id: number, updateHouseDto: UpdateHouseDto): Promise<string> {
     try {
       const house = await this.checkUserGetHouse(updateHouseDto, false, id);
