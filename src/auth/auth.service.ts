@@ -38,11 +38,11 @@ export class AuthService {
     }
 
     const userHistorySessions = await this.historySessionRepository.findOne({
-      where: { fkUserId: user },
+      where: { fkUserId: user, active: true },
       order: { createdAt: 'DESC' },
     });
 
-    if (userHistorySessions && userHistorySessions.active) {
+    if (userHistorySessions) {
       // Invalidate jwt
       userHistorySessions.active = false;
       userHistorySessions.invalidateBy = 'User action';

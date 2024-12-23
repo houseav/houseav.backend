@@ -13,7 +13,7 @@ import { Church } from 'src/church/entities/church.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
 
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserWithoutPasswordDto } from './dto/create-user.dto';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 
 import { MailgunService } from 'src/mailgun/mailgun.service';
@@ -143,7 +143,10 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, updateUserDto: CreateUserDto): Promise<User> {
+  async update(
+    id: number,
+    updateUserDto: CreateUserWithoutPasswordDto,
+  ): Promise<User> {
     // I allow the user to update the password only trough forgot-password endpoint
     delete updateUserDto.password;
 

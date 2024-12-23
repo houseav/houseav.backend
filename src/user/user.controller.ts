@@ -11,10 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserWithoutPasswordDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -55,7 +54,10 @@ export class UserController {
   @Patch(':id')
   @UsePipes(ValidationPipe)
   @ApiBody({ type: UpdateUserDto })
-  update(@Param('id') id: string, @Body() updateUserDto: CreateUserDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: CreateUserWithoutPasswordDto,
+  ) {
     return this.userService.update(+id, updateUserDto);
   }
 

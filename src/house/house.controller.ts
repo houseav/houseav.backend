@@ -21,6 +21,7 @@ import { UpdateHouseDto } from './dto/update-house.dto';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
+import { Public } from 'src/decorators/public.decorator';
 
 class RequestInterface extends Request {
   user: User;
@@ -80,6 +81,7 @@ export class HouseController {
     return await this.houseService.findUserHouses(req.user.id);
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.houseService.findOne(+id);
