@@ -6,6 +6,7 @@ import { House } from './entities/house.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { HouseResponse } from './dto/house-response';
 
 @Injectable()
 export class HouseService {
@@ -149,22 +150,21 @@ export class HouseService {
     }
   }
 
-  async update(id: number, updateHouseDto: UpdateHouseDto): Promise<string> {
+  async update(
+    id: number,
+    updateHouseDto: UpdateHouseDto,
+  ): Promise<HouseResponse> {
     try {
-      const house = await this.checkUserGetHouse(updateHouseDto, false, id);
-      console.log(
-        'House to update:---------------------------------------------- ',
-        house,
-      );
+      let house = await this.checkUserGetHouse(updateHouseDto, false, id);
       if (house.fkQueueHouseRegistrationId) {
-        await this.houseRepository.update(id, house);
-        return 'House updated with success';
+        house = await this.houseRepository.update(id, house);
+        return { message: `House updated with success` };
       } else {
-        return 'Error while updating house';
+        return { message: `Error while updating house` };
       }
     } catch (error) {
       console.error('Error while updating house: ' + error);
-      return 'Error while updating house';
+      return { message: `Error while updating house`};
     }
   }
 
