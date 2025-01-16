@@ -6,6 +6,7 @@ import { House } from './entities/house.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { HouseResponse } from './dto/house-response';
 
 @Injectable()
 export class HouseService {
@@ -129,22 +130,41 @@ export class HouseService {
     }
   }
 
-  async update(id: number, updateHouseDto: UpdateHouseDto): Promise<string> {
+  async findOneByUserTkn(idHouse: number): Promise<House | any> {
     try {
-      const house = await this.checkUserGetHouse(updateHouseDto, false, id);
-      console.log(
-        'House to update:---------------------------------------------- ',
-        house,
-      );
+      console.log('House');
+      // Filter the user's houses to find the one with the matching idHouse
+      // const houseFounded = user.fkHouseId.find((house) => house.id === idHouse);
+
+      // if (houseFounded.fkQueueHouseRegistrationId.verified == false) {
+      //   return { verified: false, message: 'House not verified yet' };
+      // }
+
+      // if (!houseFounded) {
+      //   throw new Error('House not found for this user!');
+      // }
+
+      // return houseFounded;
+    } catch (error) {
+      console.error('Error while findByUser: ' + error);
+    }
+  }
+
+  async update(
+    id: number,
+    updateHouseDto: UpdateHouseDto,
+  ): Promise<HouseResponse> {
+    try {
+      let house = await this.checkUserGetHouse(updateHouseDto, false, id);
       if (house.fkQueueHouseRegistrationId) {
-        await this.houseRepository.update(id, house);
-        return 'House updated with success';
+        house = await this.houseRepository.update(id, house);
+        return { message: `House updated with success` };
       } else {
-        return 'Error while updating house';
+        return { message: `Error while updating house` };
       }
     } catch (error) {
       console.error('Error while updating house: ' + error);
-      return 'Error while updating house';
+      return { message: `Error while updating house`};
     }
   }
 

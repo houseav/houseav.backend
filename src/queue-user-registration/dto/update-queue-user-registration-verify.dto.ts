@@ -1,7 +1,7 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { UpdateQueueUserRegistrationDto } from './update-queue-user-registration.dto';
 import { IsString } from 'class-validator';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { BaseUserDto } from 'src/user/dto/create-user.dto';
 
 export class UpdateQueueUserRegistrationVerifyDto extends PartialType(
   UpdateQueueUserRegistrationDto,
@@ -24,5 +24,5 @@ export class UpdateQueueUserRegistrationVerifyDto extends PartialType(
     "address": "Via Rosalba Carriera 11, Milano"
   }}`,
   })
-  user?: CreateUserDto;
+  user?: BaseUserDto;
 }

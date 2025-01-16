@@ -23,6 +23,12 @@ import { ReferenceLetterService } from 'src/reference-letter/reference-letter.se
 import { ChurchService } from 'src/church/church.service';
 import Mailgun from 'mailgun.js';
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { House } from 'src/house/entities/house.entity';
+import { HouseController } from 'src/house/house.controller';
+import { HouseService } from 'src/house/house.service';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
+import { QueueHouseRegistrationController } from 'src/queue-house-registration/queue-house-registration.controller';
 
 @Module({
   imports: [
@@ -31,9 +37,11 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
       User,
       Role,
       QueueRegister,
+      QueueHouseRegistration,
       Policy,
       ReferenceLetter,
       Church,
+      House,
     ]),
     User,
     ForgotPassword,
@@ -46,20 +54,24 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
   controllers: [
     ForgotPasswordController,
     QueueUserRegistrationController,
+    QueueHouseRegistrationController,
     RoleController,
     PolicyController,
     ReferenceLetterController,
     ChurchController,
+    HouseController,
   ],
   providers: [
     ForgotPasswordService,
     QueueUserRegistrationService,
+    QueueHouseRegistrationService,
     UserService,
     RoleService,
     PolicyService,
     ReferenceLetterService,
     ChurchService,
     MailgunService,
+    HouseService,
   ],
 })
 export class ForgotPasswordModule {}

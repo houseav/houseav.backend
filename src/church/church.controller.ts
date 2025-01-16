@@ -8,17 +8,22 @@ import {
   Delete,
   ValidationPipe,
   UsePipes,
+  UseGuards,
 } from '@nestjs/common';
 import { ChurchService } from './church.service';
 import { CreateChurchDto } from './dto/create-church.dto';
 import { UpdateChurchDto } from './dto/update-church.dto';
-import { ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { Public } from 'src/decorators/public.decorator';
 
 @ApiTags('church')
 @Controller('church')
 export class ChurchController {
   constructor(private readonly churchService: ChurchService) {}
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @UsePipes(ValidationPipe)
   @ApiBody({ type: CreateChurchDto })
@@ -26,11 +31,14 @@ export class ChurchController {
     return this.churchService.create(createChurchDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.churchService.findAll();
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiParam({
     name: 'id',
@@ -42,6 +50,8 @@ export class ChurchController {
     return this.churchService.findOne(+id);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   @UsePipes(ValidationPipe)
   @ApiParam({
@@ -55,6 +65,8 @@ export class ChurchController {
     return this.churchService.update(+id, updateChurchDto);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @ApiParam({
     name: 'id',

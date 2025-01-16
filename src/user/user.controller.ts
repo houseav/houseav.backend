@@ -8,14 +8,19 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserWithoutPasswordDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorators/public.decorator';
 import { UserRegistrationDto } from './dto/user-registration.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
+@ApiBearerAuth('access-token')
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('user')
 @Controller('user')
 export class UserController {
@@ -28,17 +33,25 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Get('/dashboard/main-data')
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'super-admin')
+  async getDashboardData() {
+    return await this.userService.getDashboardMainData();
+  }
+
   @Get('/admin-view-churches/:id')
   async getViewAdminChurches(@Param('id') id: string) {
     return await this.userService.getChurchesFromViewAdminChurches(+id);
   }
 
   @Get('/get-users-admin-viewers')
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'super-admin')
   getUsersByAdminViewerOnQueueRegister() {
     return this.userService.getUsersByAdminViewerOnQueueRegister();
   }
 
-  @ApiBearerAuth()
   @Get()
   getUsers() {
     return this.userService.findAll();
@@ -52,7 +65,10 @@ export class UserController {
   @Patch(':id')
   @UsePipes(ValidationPipe)
   @ApiBody({ type: UpdateUserDto })
-  update(@Param('id') id: string, @Body() updateUserDto: CreateUserDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: CreateUserWithoutPasswordDto,
+  ) {
     return this.userService.update(+id, updateUserDto);
   }
 

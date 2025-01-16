@@ -11,12 +11,21 @@ import {
   Query,
   Res,
   Next,
+  UseGuards,
+  Req,
+  ExecutionContext,
 } from '@nestjs/common';
 import { HouseService } from './house.service';
 import { CreateHouseDto } from './dto/create-house.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Response, NextFunction, query } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/user/entities/user.entity';
+import { Public } from 'src/decorators/public.decorator';
+
+class RequestInterface extends Request {
+  user: User;
+}
 
 @ApiBearerAuth('access-token')
 @ApiTags('house')
@@ -34,6 +43,8 @@ export class HouseController {
   // @ApiQuery({ name: 'wifi' })
   // @ApiQuery({ name: 'furnished' })
   // @ApiQuery({ name: 'searchTerm' })
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get('/get')
   async getListingsBySearch(
     // @Query('wifi') wifi: boolean,
@@ -56,21 +67,28 @@ export class HouseController {
     }
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.houseService.findAll();
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
+  @Get('user')
+  async findUserHouses(@Req() req: RequestInterface) {
+    return await this.houseService.findUserHouses(req.user.id);
+  }
+
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.houseService.findOne(+id);
   }
 
-  @Get('user/:id')
-  async findUserHouses(@Param('id') id: string) {
-    return await this.houseService.findUserHouses(+id);
-  }
-
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get('user/:id/:idHouse')
   async findOneByUser(
     @Param('id') id: string,
@@ -83,6 +101,8 @@ export class HouseController {
     return house;
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   @UsePipes(ValidationPipe)
   @ApiBody({ type: UpdateHouseDto })
@@ -90,6 +110,8 @@ export class HouseController {
     return this.houseService.update(+id, updateHouseDto);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.houseService.remove(+id);

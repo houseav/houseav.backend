@@ -7,8 +7,9 @@ async function bootstrap() {
 
   // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('Houseav Backend')
-    .setDescription('Houseav Backend project')
+    // .setTitle('Houseav Backend')
+    // .setDescription('Houseav Backend project')
+    .setTitle('LOCAL')
     .setVersion('1.0')
     .addBearerAuth(
       { in: 'header', type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },

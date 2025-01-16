@@ -72,7 +72,7 @@ import { HistorySession } from './history-sessions/entities/history-session.enti
             HistorySession,
           ],
           synchronize: true,
-          logging: true,
+          logging: false,
         };
       },
 
