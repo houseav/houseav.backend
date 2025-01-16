@@ -20,6 +20,12 @@ import { ReferenceLetterController } from 'src/reference-letter/reference-letter
 import { ReferenceLetterService } from 'src/reference-letter/reference-letter.service';
 import { MailgunService } from 'src/mailgun/mailgun.service';
 import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
+import { House } from 'src/house/entities/house.entity';
+import { HouseController } from 'src/house/house.controller';
+import { HouseService } from 'src/house/house.service';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { QueueHouseRegistrationController } from 'src/queue-house-registration/queue-house-registration.controller';
+import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
 
 @Module({
   imports: [
@@ -30,15 +36,18 @@ import { HistorySession } from 'src/history-sessions/entities/history-session.en
       QueueRegister,
       Policy,
       ReferenceLetter,
-      HistorySession
+      HistorySession,
+      House,
+      QueueHouseRegistration,
     ]),
-    QueueRegister,
     Role,
     Church,
     Policy,
   ],
   controllers: [
     UserController,
+    HouseController,
+    QueueHouseRegistrationController,
     RoleController,
     ChurchController,
     QueueUserRegistrationController,
@@ -47,6 +56,8 @@ import { HistorySession } from 'src/history-sessions/entities/history-session.en
   ],
   providers: [
     UserService,
+    HouseService,
+    QueueHouseRegistrationService,
     RoleService,
     ChurchService,
     QueueUserRegistrationService,

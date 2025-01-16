@@ -17,16 +17,24 @@ import { Church } from 'src/church/entities/church.entity';
 import { ChurchController } from 'src/church/church.controller';
 import { ChurchService } from 'src/church/church.service';
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { House } from 'src/house/entities/house.entity';
+import { HouseController } from 'src/house/house.controller';
+import { HouseService } from 'src/house/house.service';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
+import { QueueHouseRegistrationController } from 'src/queue-house-registration/queue-house-registration.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       QueueRegister,
+      QueueHouseRegistration,
       ReferenceLetter,
       User,
       Role,
       Policy,
       Church,
+      House,
     ]),
     QueueRegister,
     User,
@@ -36,17 +44,21 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
   controllers: [
     ReferenceLetterController,
     QueueUserRegistrationController,
+    QueueHouseRegistrationController,
     UserController,
     PolicyController,
     ChurchController,
+    HouseController,
   ],
   providers: [
     ReferenceLetterService,
     QueueUserRegistrationService,
+    QueueHouseRegistrationService,
     UserService,
     PolicyService,
     ChurchService,
     MailgunService,
+    HouseService,
   ],
 })
 export class ReferenceLetterModule {}

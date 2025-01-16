@@ -13,9 +13,12 @@ import { CreateQueueHouseRegistrationDto } from './dto/create-queue-house-regist
 import { UpdateQueueHouseRegistrationDto } from './dto/update-queue-house-registration.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/decorators/role.decorator';
 
 @ApiBearerAuth('access-token')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('admin', 'super-admin')
 @ApiTags('queue-house-registration')
 @Controller('queue-house-registration')
 export class QueueHouseRegistrationController {

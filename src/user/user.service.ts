@@ -17,6 +17,9 @@ import { CreateUserWithoutPasswordDto } from './dto/create-user.dto';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { DashboardMainData } from './dto/dashboard-main-data';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { House } from 'src/house/entities/house.entity';
 
 @Injectable()
 export class UserService {
@@ -25,8 +28,12 @@ export class UserService {
     private userRepository: Repository<User>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    @InjectRepository(House)
+    private houseRepository: Repository<House>,
     @InjectRepository(QueueRegister)
     private queueUserRegisterRepository: Repository<QueueRegister>,
+    @InjectRepository(QueueHouseRegistration)
+    private queueHouseRegisterRepository: Repository<QueueHouseRegistration>,
     @InjectRepository(Policy)
     private policyRepository: Repository<Policy>,
     @InjectRepository(ReferenceLetter)
@@ -135,6 +142,27 @@ export class UserService {
     }
   }
 
+  async getDashboardMainData(): Promise<DashboardMainData> {
+    try {
+      const numberUsers = await this.userRepository.find();
+      const numberQueueUsers = await this.queueUserRegisterRepository.find({
+        where: { verified: false },
+      });
+      const numberQueueListing = await this.queueHouseRegisterRepository.find({
+        where: { verified: false },
+      });
+      const numberHouses = await this.houseRepository.find();
+      return {
+        numberUserQueueRegister: numberQueueUsers.length,
+        numberListingQueueListing: numberQueueListing.length,
+        numberUser: numberUsers.length,
+        numberListing: numberHouses.length,
+      };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
@@ -216,9 +244,8 @@ export class UserService {
     let church;
     let updatedUser;
 
-
-    if(id != '0'){
-        church = await this.churchRepository.findOne({
+    if (id != '0') {
+      church = await this.churchRepository.findOne({
         where: { id: churchId },
       });
       if (!church) return { message: 'Church not found, status: 404' };

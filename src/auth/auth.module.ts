@@ -33,6 +33,12 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
 import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
 import { HistorySessionsService } from 'src/history-sessions/history-sessions.service';
 import { HistorySessionsController } from 'src/history-sessions/history-sessions.controller';
+import { House } from 'src/house/entities/house.entity';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { HouseService } from 'src/house/house.service';
+import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
+import { QueueHouseRegistrationController } from 'src/queue-house-registration/queue-house-registration.controller';
+import { HouseController } from 'src/house/house.controller';
 
 @Module({
   imports: [
@@ -45,10 +51,12 @@ import { HistorySessionsController } from 'src/history-sessions/history-sessions
       User,
       Role,
       QueueRegister,
+      QueueHouseRegistration,
       Policy,
       ReferenceLetter,
       Church,
-      HistorySession
+      HistorySession,
+      House,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -70,7 +78,9 @@ import { HistorySessionsController } from 'src/history-sessions/history-sessions
     JwtStrategy,
     UserService,
     RoleService,
+    HouseService,
     QueueUserRegistrationService,
+    QueueHouseRegistrationService,
     QueueFeatureRequestsService,
     PolicyService,
     ReferenceLetterService,
@@ -83,7 +93,9 @@ import { HistorySessionsController } from 'src/history-sessions/history-sessions
     AuthController,
     UserController,
     RoleController,
+    HouseController,
     QueueUserRegistrationController,
+    QueueHouseRegistrationController,
     QueueFeatureRequestsController,
     PolicyController,
     ReferenceLetterController,

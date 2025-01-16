@@ -16,6 +16,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { UserRegistrationDto } from './dto/user-registration.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiBearerAuth('access-token')
 @UseGuards(AuthGuard('jwt'))
@@ -29,6 +31,13 @@ export class UserController {
   @ApiBody({ type: UserRegistrationDto })
   create(@Body() createUserDto: UserRegistrationDto) {
     return this.userService.create(createUserDto);
+  }
+
+  @Get('/dashboard/main-data')
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'super-admin')
+  async getDashboardData() {
+    return await this.userService.getDashboardMainData();
   }
 
   @Get('/admin-view-churches/:id')

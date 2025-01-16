@@ -19,6 +19,12 @@ import { Church } from 'src/church/entities/church.entity';
 import { ChurchController } from 'src/church/church.controller';
 import { ChurchService } from 'src/church/church.service';
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { House } from 'src/house/entities/house.entity';
+import { HouseController } from 'src/house/house.controller';
+import { HouseService } from 'src/house/house.service';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { QueueHouseRegistrationController } from 'src/queue-house-registration/queue-house-registration.controller';
+import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
 
 @Module({
   imports: [
@@ -29,6 +35,8 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
       Policy,
       ReferenceLetter,
       Church,
+      House,
+      QueueHouseRegistration,
     ]),
     QueueRegister,
     User,
@@ -37,20 +45,24 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
   ],
   controllers: [
     QueueUserRegistrationController,
+    QueueHouseRegistrationController,
     UserController,
     RoleController,
     PolicyController,
     ReferenceLetterController,
     ChurchController,
+    HouseController,
   ],
   providers: [
     QueueUserRegistrationService,
+    QueueHouseRegistrationService,
     UserService,
     RoleService,
     PolicyService,
     ReferenceLetterService,
     ChurchService,
     MailgunService,
+    HouseService,
   ],
 })
 export class QueueUserRegistrationModule {}
