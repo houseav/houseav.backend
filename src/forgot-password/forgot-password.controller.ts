@@ -14,12 +14,14 @@ import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
 import { ForgotPasswordResponse } from './response/ForgotPasswordResponse';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('forgot-password')
 export class ForgotPasswordController {
   constructor(private readonly forgotPasswordService: ForgotPasswordService) {}
 
   @Post('/request')
+  @Public()
   create(
     @Body() createForgotPasswordDto: CreateForgotPasswordDto,
   ): Promise<ForgotPasswordResponse> {
@@ -29,6 +31,7 @@ export class ForgotPasswordController {
   }
 
   @Put('/reset')
+  @Public()
   reset(
     @Query() query: any,
     @Body() body: any,
@@ -37,6 +40,7 @@ export class ForgotPasswordController {
   }
 
   @Get('/check')
+  @Public()
   async checkForgotPasswordRequest(
     @Query() query: any,
   ): Promise<ForgotPasswordResponse> {

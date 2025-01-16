@@ -46,6 +46,8 @@ export class UserController {
   }
 
   @Get('/get-users-admin-viewers')
+  @UseGuards(RolesGuard)
+  @Roles('admin', 'super-admin')
   getUsersByAdminViewerOnQueueRegister() {
     return this.userService.getUsersByAdminViewerOnQueueRegister();
   }
