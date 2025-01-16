@@ -13,6 +13,7 @@ import {
   LoginRefreshResponseDto,
 } from 'src/user/dto/login-refresh.dto';
 import { ConfigService } from '@nestjs/config';
+import { SignOutResponse } from './responses/sign-out.response';
 
 @Injectable()
 export class AuthService {
@@ -93,7 +94,7 @@ export class AuthService {
     return { access_token: accessToken, refresh_token: refresh_token, user };
   }
 
-  async signOut(request: any): Promise<string> {
+  async signOut(request: any): Promise<SignOutResponse> {
     try {
       const authHeader = request.headers['authorization'];
       const token = authHeader?.split(' ')[1];
@@ -126,7 +127,7 @@ export class AuthService {
       } else {
         throw new UnauthorizedException('Session not found');
       }
-      return 'User signed-out with success';
+      return { message: 'User signed-out with success' };
     } catch (error) {
       throw new Error(`Error occured while sign-out, ${error.message}`);
     }
@@ -170,7 +171,7 @@ export class AuthService {
           },
         );
 
-        if (userHistorySessions) {
+      if (userHistorySessions) {
           // Invalidate jwt
           userHistorySessions.access_token = access_token;
           userHistorySessions.refresh_token = refresh_token;

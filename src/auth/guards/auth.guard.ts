@@ -38,7 +38,6 @@ export class AuthGuard implements CanActivate {
         secret: this.config.get<string>('AUTH_SECRET'),
       });
     } catch (e) {
-      console.log('Unable to verify token', e.message);
       throw new UnauthorizedException();
     }
 

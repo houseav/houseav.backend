@@ -12,6 +12,7 @@ import {
   LoginRefreshResponseDto,
 } from 'src/user/dto/login-refresh.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { SignOutResponse } from './responses/sign-out.response';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -48,8 +49,7 @@ export class AuthController {
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @Post('sign-out')
-  async signOut(@Req() request: Request): Promise<string> {
-    console.log(request);
+  async signOut(@Req() request: Request): Promise<SignOutResponse> {
     return await this.authService.signOut(request);
   }
 }

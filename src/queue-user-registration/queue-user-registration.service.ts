@@ -63,7 +63,9 @@ export class QueueUserRegistrationService {
     const userNew = new User();
     userNew.username = user.username;
     userNew.email = user.email;
-    userNew.password = user.password;
+    if (user?.password && user?.password != '' && user?.password.length > 6) {
+      userNew.password = user.password;
+    }
     userNew.social = user.social;
     userNew.number = user.number;
     userNew.avatar = user.avatar;
@@ -121,8 +123,8 @@ export class QueueUserRegistrationService {
   }
 
   async findQueueByChurchIdsAndVerifiedFalse(churchDto: any) {
-    if (churchDto.churches && Array.isArray(churchDto.churches)) {
-      const churchIds = churchDto.churches.map((church) => church.id);
+    if (churchDto && Array.isArray(churchDto)) {
+      const churchIds = churchDto.map((church) => church.id);
       const queueUsersRetrieved = await this.queueUserRegisterRepository.find({
         where: {
           id: In(churchIds),
@@ -142,7 +144,6 @@ export class QueueUserRegistrationService {
         return { status: 404, message: 'No records found!' };
       }
     } else {
-      console.log('CHURCHDTO', churchDto);
       return { message: 'Churches not found' };
     }
   }
