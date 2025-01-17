@@ -9,6 +9,7 @@ import {
 import { alert } from './templates/sign-up';
 import { ForgotPassword } from './templates/forgot-password';
 import { UserVerifiedMailTemplate } from './templates/user-verified';
+import { HouseVerifiedMailTemplate } from './templates/house-verified';
 
 @Injectable()
 export class MailgunService {
@@ -60,7 +61,7 @@ export class MailgunService {
     }
   }
 
-  async sendEmailVerified(email: string): Promise<MessagesSendResult> {
+  async sendEmailUserVerified(email: string): Promise<MessagesSendResult> {
     try {
       const mailgun = new Mailgun(formData);
       const mg = mailgun.client({
@@ -73,6 +74,31 @@ export class MailgunService {
         to: [email],
         subject: '[Houseav] Account Verified',
         html: UserVerifiedMailTemplate(),
+      });
+
+      return msg;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async sendEmailHouseVerified(
+    email: string,
+    houseTitle: string,
+  ): Promise<MessagesSendResult> {
+    try {
+      const mailgun = new Mailgun(formData);
+      const mg = mailgun.client({
+        username: 'mailgun@support.houseav.life',
+        key: process.env.MAILGUN_API_KEY,
+      });
+
+      const msg = await mg.messages.create(MAILGUN_DOMAIN, {
+        from: `${MAILGUN_USER} <${MAILGUN_FROM_NO_REPLY}>`,
+        to: [email],
+        subject: '[Houseav] House Verified',
+        html: HouseVerifiedMailTemplate(houseTitle),
       });
 
       return msg;

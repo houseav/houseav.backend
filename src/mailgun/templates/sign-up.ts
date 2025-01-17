@@ -67,7 +67,7 @@ center;border-radius:3px 3px 0 0;background-color:#FF9F00;margin:0;padding:20px;
 																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;">We are reviewing your profile for houseav
 																							<strong>safety.</strong>
 																						</p>
-																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-bottom:0!important;">We will send you an email as soon as your profile is ready.</p>
+																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-bottom:0!important;">Ti invieremo un'email non appena il tuo profilo sarà pronto.</p>
 																					</td>
 																				</tr>
 																			</table>
@@ -80,7 +80,7 @@ center;border-radius:3px 3px 0 0;background-color:#FF9F00;margin:0;padding:20px;
 																					<td align="left" style="padding:0 0 0 30px;" class="content">
 																					<a href="https://houseav.life" 
 																					   style="font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;font-weight:bold;background:#d3d3d3;text-decoration:none;padding:15px 25px;color:#040404;border-radius:4px;display:inline-block;mso-padding-alt:0;text-underline-color:#040404;" 
-																					   class="dark-button">Contact us</a>
+																					   class="dark-button">Contattaci</a>
 
 																					<style>
 																					    .dark-button:hover {
@@ -98,7 +98,7 @@ center;border-radius:3px 3px 0 0;background-color:#FF9F00;margin:0;padding:20px;
 																			<table align="center" role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse:collapse;max-width:600px;width:100%;background-color:#fffffe;">
 																				<tr style="vertical-align:middle;" valign="middle">
 																					<td class="content">
-																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;margin-bottom:0!important;">Thanks for choosing Houseav.</p>
+																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;margin-bottom:0!important;">Team Houseav.</p>
 																					</td>
 																				</tr>
 																			</table>
