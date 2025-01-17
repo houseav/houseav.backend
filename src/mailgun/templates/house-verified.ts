@@ -1,10 +1,4 @@
-import { FORGOT_PASSWORD_ENDPOINT } from '../../../utils/constants';
-
-export const ForgotPassword = (
-  temporaryPassword: string,
-  email: string,
-  timeCreation: Date,
-): string => `
+export const HouseVerifiedMailTemplate = (houseTitle: string): string => `
 <!DOCTYPE html>
 <html lang="en" dir="ltr"
 	xmlns:v="urn:schemas-microsoft-com:vml"
@@ -70,10 +64,8 @@ center;border-radius:3px 3px 0 0;background-color:#FF9F00;margin:0;padding:20px;
 																			<table align="center" role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse:collapse;max-width:600px;width:100%;background-color:#fffffe;">
 																				<tr style="vertical-align:middle;" valign="middle">
 																					<td class="content">
-																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;">Ti stiamo inviando una password temporanea per accedere alla pagina di reimpostazione della password del tuo account.</p>
-																							
-																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-bottom:0!important;">The temporary password will expire in 5 minutes</p>
-																						<p style="color:#000000;font-size:23px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-bottom:0!important;">Ecco la tua password temporanea: <strong>${temporaryPassword}</strong></p>
+																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;">Il tuo immobile <strong>${houseTitle}</strong> è ora disponibile nel tuo profilo. <br>Accedi per visualizzarlo e iniziare a ricevere nuove richieste per questa proprietà.</p>
+
 																					</td>
 																				</tr>
 																			</table>
@@ -84,9 +76,9 @@ center;border-radius:3px 3px 0 0;background-color:#FF9F00;margin:0;padding:20px;
 																			<table role="presentation" border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;width:100%">
 																				<tr style="vertical-align:middle;" valign="middle">
 																					<td align="left" style="padding:0 0 0 30px;" class="content">
-																					<a href="${FORGOT_PASSWORD_ENDPOINT}?token=${encodeURIComponent(temporaryPassword)}&email=${encodeURIComponent(email)}&timeCreation=${encodeURIComponent(timeCreation.toISOString())}" 
-																					   style="font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;font-weight:bold;background:#d3d3d3;text-decoration:none;padding:15px 25px;color:#040404;border-radius:4px;display:inline-block;mso-padding-alt:0;text-underline-color:#040404;" 
-																					   class="dark-button">Reset password</a>
+																					
+																					   
+																					   
 
 																					<style>
 																					    .dark-button:hover {

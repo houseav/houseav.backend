@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { HouseService } from 'src/house/house.service';
 import { House } from 'src/house/entities/house.entity';
+import { MailgunService } from 'src/mailgun/mailgun.service';
 
 @Injectable()
 export class QueueHouseRegistrationService {
@@ -18,6 +19,7 @@ export class QueueHouseRegistrationService {
     @InjectRepository(House)
     private houseRepository: Repository<House>,
     private houseService: HouseService,
+    private readonly mailgunService: MailgunService,
   ) {}
 
   async create(
@@ -113,7 +115,12 @@ export class QueueHouseRegistrationService {
         +queueHouseId,
         queueHouse,
       );
-
+    await this.mailgunService.sendEmailHouseVerified(
+      houseDto.house.fkHouseId.fkUserId.email,
+      houseDto.house.fkHouseId.title +
+        ', Indirizzo: ' +
+        houseDto.house.fkHouseId.address,
+    );
     if (queueHouseUpdated) {
       const {
         title,

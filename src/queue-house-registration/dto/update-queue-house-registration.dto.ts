@@ -9,4 +9,5 @@ export class UpdateQueueHouseRegistrationDto extends PartialType(
     example: ``,
   })
   house?: CreateHouseDto;
+  email?: string;
 }
