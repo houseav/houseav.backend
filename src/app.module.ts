@@ -38,6 +38,8 @@ import { ForgotPassword } from './forgot-password/entities/forgot-password.entit
 import { DatabaseInitService } from './database/init.database';
 import { HistorySessionsModule } from './history-sessions/history-sessions.module';
 import { HistorySession } from './history-sessions/entities/history-session.entity';
+import { MapGeometryModule } from './map-geometry/map-geometry.module';
+import { MapGeometry } from './map-geometry/entities/map-geometry.entity';
 
 @Module({
   imports: [
@@ -64,6 +66,7 @@ import { HistorySession } from './history-sessions/entities/history-session.enti
             Church,
             User,
             House,
+            MapGeometry,
             QueueRegister,
             QueueHouseRegistration,
             ReferenceLetter,
@@ -89,6 +92,7 @@ import { HistorySession } from './history-sessions/entities/history-session.enti
     BannerModule,
     QueueFeatureRequestsModule,
     HouseModule,
+    MapGeometryModule,
     QueueHouseRegistrationModule,
     QueueUserRegistrationModule,
     AuthModule,

@@ -23,6 +23,7 @@ export class HouseService {
     try {
       const house = await this.checkUserGetHouse(createHouseDto, true, null);
       const houseSaved = await this.houseRepository.save(house);
+      //TODO save latitude longitude
       const queueHouse = new QueueHouseRegistration();
       queueHouse.fkHouseId = houseSaved;
       queueHouse.verified = false;

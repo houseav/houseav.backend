@@ -142,4 +142,10 @@ export class CreateHouseDto {
   @ApiProperty({ example: `false` })
   @IsBoolean()
   verified?: boolean | null;
+
+  @ApiProperty({ example: `9.112047290691110` })
+  longitude?: string;
+
+  @ApiProperty({ example: `45.49220310174620` })
+  latitude?: string;
 }

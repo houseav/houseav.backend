@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
 
 @Entity('House')
 export class House {
@@ -23,13 +24,13 @@ export class House {
   description: string;
 
   @Column({ nullable: true })
-  zipcode: string;
+  zipcode: number;
 
   @Column({ nullable: true })
   address: string;
 
   @Column({ nullable: true })
-  streetNumber: string;
+  streetNumber: number;
 
   @Column({ nullable: true })
   city: string;
@@ -117,6 +118,19 @@ export class House {
     },
   ])
   fkUserId: User;
+
+  @ManyToOne(() => MapGeometry, (map) => map.fkHouseId, {
+    onDelete: 'CASCADE',
+    onUpdate: 'NO ACTION',
+  })
+  @JoinColumn([
+    {
+      name: 'fkMapId',
+      foreignKeyConstraintName: 'fkMapId',
+      referencedColumnName: 'id',
+    },
+  ])
+  fkMapId: MapGeometry;
 
   @OneToOne(
     () => QueueHouseRegistration,
