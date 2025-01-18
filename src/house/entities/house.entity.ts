@@ -23,7 +23,19 @@ export class House {
   description: string;
 
   @Column({ nullable: true })
+  zipcode: string;
+
+  @Column({ nullable: true })
   address: string;
+
+  @Column({ nullable: true })
+  streetNumber: string;
+
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  state: string;
 
   @Column({ nullable: true })
   bathrooms: number;

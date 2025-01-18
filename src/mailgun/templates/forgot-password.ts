@@ -72,7 +72,7 @@ center;border-radius:3px 3px 0 0;background-color:#FF9F00;margin:0;padding:20px;
 																					<td class="content">
 																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;">Ti stiamo inviando una password temporanea per accedere alla pagina di reimpostazione della password del tuo account.</p>
 																							
-																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-bottom:0!important;">The temporary password will expire in 5 minutes</p>
+																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-bottom:0!important;">La password temporanea scadra' in 5 minuti.</p>
 																						<p style="color:#000000;font-size:23px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-bottom:0!important;">Ecco la tua password temporanea: <strong>${temporaryPassword}</strong></p>
 																					</td>
 																				</tr>

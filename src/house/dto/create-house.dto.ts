@@ -26,6 +26,38 @@ export class CreateHouseDto {
   })
   address: string;
 
+  @ApiProperty({ example: `zipcode` })
+  @IsString({ message: 'Zipcode must be a string', always: true })
+  @IsNotEmpty({
+    message: 'Zipcode must be validated',
+    always: true,
+  })
+  zipcode: string;
+
+  @ApiProperty({ example: `streetNumber` })
+  @IsString({ message: 'Streetnumber must be a string', always: true })
+  @IsNotEmpty({
+    message: 'StreetNumber must be validated',
+    always: true,
+  })
+  streetNumber: string;
+
+  @ApiProperty({ example: `city` })
+  @IsString({ message: 'City must be a string', always: true })
+  @IsNotEmpty({
+    message: 'City must be validated',
+    always: true,
+  })
+  city: string;
+
+  @ApiProperty({ example: `state` })
+  @IsString({ message: 'State must be a string', always: true })
+  @IsNotEmpty({
+    message: 'State must be validated',
+    always: true,
+  })
+  state: string;
+
   @ApiProperty({ example: 2 })
   @IsNumber({ allowNaN: false })
   @IsNotEmpty({

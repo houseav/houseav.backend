@@ -64,7 +64,7 @@ center;border-radius:3px 3px 0 0;background-color:#FF9F00;margin:0;padding:20px;
 																			<table align="center" role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse:collapse;max-width:600px;width:100%;background-color:#fffffe;">
 																				<tr style="vertical-align:middle;" valign="middle">
 																					<td class="content">
-																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;">Il tuo immobile <strong>${houseTitle}</strong> è ora disponibile nel tuo profilo. <br>Accedi per visualizzarlo e iniziare a ricevere nuove richieste per questa proprietà.</p>
+																						<p style="color:#000000;font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;margin-top:0!important;">Il tuo immobile con <strong>titolo: ${houseTitle}</strong> è ora disponibile nel tuo profilo. <br>Accedi per visualizzarlo e iniziare a ricevere nuove richieste per questa proprietà.</p>
 
 																					</td>
 																				</tr>
