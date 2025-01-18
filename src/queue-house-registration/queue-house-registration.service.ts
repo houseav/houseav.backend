@@ -126,6 +126,10 @@ export class QueueHouseRegistrationService {
         title,
         description,
         address,
+        zipcode,
+        streetNumber,
+        city,
+        state,
         bathrooms,
         bedrooms,
         furnished,
@@ -149,6 +153,10 @@ export class QueueHouseRegistrationService {
       const houseChecked = new House();
       houseChecked.id = id;
       houseChecked.address = address;
+      houseChecked.zipcode = zipcode;
+      houseChecked.streetNumber = streetNumber;
+      houseChecked.city = city;
+      houseChecked.state = state;
       houseChecked.allergy = allergy;
       houseChecked.availability = availability;
       houseChecked.availabilityDateEnd = availabilityDateEnd;
