@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
 import { HouseResponse } from './dto/house-response';
+import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
 
 @Injectable()
 export class HouseService {
@@ -17,13 +18,24 @@ export class HouseService {
     private userRepository: Repository<User>,
     @InjectRepository(QueueHouseRegistration)
     private queueHouseRegistrationRepository: Repository<QueueHouseRegistration>,
+    @InjectRepository(MapGeometry)
+    private mapGeometryRepository: Repository<MapGeometry>,
   ) {}
 
   async create(createHouseDto: CreateHouseDto): Promise<any> {
     try {
       const house = await this.checkUserGetHouse(createHouseDto, true, null);
       const houseSaved = await this.houseRepository.save(house);
-      //TODO save latitude longitude
+      const mapGeometry = new MapGeometry();
+      mapGeometry.latitude = `${createHouseDto.latitude}`;
+      mapGeometry.longitude = `${createHouseDto.longitude}`;
+      mapGeometry.geometry = {
+        type: 'Point',
+        coordinates: [createHouseDto.longitude, createHouseDto.latitude],
+      };
+      mapGeometry.fkHouseId = houseSaved; // Save the MapGeometry entity
+      const mapGeometrySaved =
+        await this.mapGeometryRepository.save(mapGeometry);
       const queueHouse = new QueueHouseRegistration();
       queueHouse.fkHouseId = houseSaved;
       queueHouse.verified = false;
@@ -165,7 +177,7 @@ export class HouseService {
       }
     } catch (error) {
       console.error('Error while updating house: ' + error);
-      return { message: `Error while updating house`};
+      return { message: `Error while updating house` };
     }
   }
 

@@ -119,7 +119,7 @@ export class House {
   ])
   fkUserId: User;
 
-  @ManyToOne(() => MapGeometry, (map) => map.fkHouseId, {
+  @OneToOne(() => MapGeometry, (map) => map.fkHouseId, {
     onDelete: 'CASCADE',
     onUpdate: 'NO ACTION',
   })

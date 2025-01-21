@@ -23,6 +23,9 @@ import { Church } from 'src/church/entities/church.entity';
 import { ChurchController } from 'src/church/church.controller';
 import { ChurchService } from 'src/church/church.service';
 import { MailgunService } from 'src/mailgun/mailgun.service';
+import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
+import { MapGeometryController } from 'src/map-geometry/map-geometry.controller';
+import { MapGeometryService } from 'src/map-geometry/map-geometry.service';
 
 @Module({
   imports: [
@@ -35,6 +38,7 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
       Policy,
       ReferenceLetter,
       Church,
+      MapGeometry,
     ]),
     QueueRegister,
     User,
@@ -50,6 +54,7 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
     PolicyController,
     ReferenceLetterController,
     ChurchController,
+    MapGeometryController,
   ],
   providers: [
     QueueHouseRegistrationService,
@@ -60,6 +65,7 @@ import { MailgunService } from 'src/mailgun/mailgun.service';
     ReferenceLetterService,
     ChurchService,
     MailgunService,
+    MapGeometryService,
   ],
 })
 export class QueueHouseRegistrationModule {}
