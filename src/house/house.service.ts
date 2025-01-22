@@ -43,6 +43,7 @@ export class HouseService {
         await this.queueHouseRegistrationRepository.save(queueHouse);
       if (houseQueueSaved) {
         houseSaved.fkQueueHouseRegistrationId = houseQueueSaved;
+        houseSaved.fkMapId = mapGeometrySaved;
         await this.houseRepository.update(houseSaved.id, houseSaved);
         return { message: 'House added with success' };
       } else {
@@ -83,7 +84,11 @@ export class HouseService {
   async findOne(id: number): Promise<House | any> {
     const house = await this.houseRepository.findOne({
       where: { id },
-      relations: { fkUserId: true, fkQueueHouseRegistrationId: true },
+      relations: {
+        fkUserId: true,
+        fkQueueHouseRegistrationId: true,
+        fkMapId: true,
+      },
     });
 
     if (!house) {
@@ -194,10 +199,12 @@ export class HouseService {
 
   async getHousesBySearch(query: any): Promise<House[]> {
     const queryBuilder = this.houseRepository.createQueryBuilder('house');
-    queryBuilder.innerJoinAndSelect(
-      'house.fkQueueHouseRegistrationId',
-      'queueHouseRegistration',
-    );
+    queryBuilder
+      .innerJoinAndSelect(
+        'house.fkQueueHouseRegistrationId',
+        'queueHouseRegistration',
+      )
+      .innerJoinAndSelect('house.fkMapId', 'map');
 
     queryBuilder.where('queueHouseRegistration.verified = :verified', {
       verified: true,

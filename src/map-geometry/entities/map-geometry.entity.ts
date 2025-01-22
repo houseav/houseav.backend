@@ -24,9 +24,9 @@ export class MapGeometry {
   @Column({ nullable: true })
   longitude: string;
 
-  @OneToOne(() => House, (house: House) => house.fkMapId, {
+  @OneToOne(() => House, (house) => house.fkMapId, {
     onDelete: 'CASCADE',
-    onUpdate: 'NO ACTION',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn([
     {

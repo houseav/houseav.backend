@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MapGeometryService } from './map-geometry.service';
 import { CreateMapGeometryDto } from './dto/create-map-geometry.dto';
 import { UpdateMapGeometryDto } from './dto/update-map-geometry.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('map-geometry')
 export class MapGeometryController {
@@ -17,13 +18,17 @@ export class MapGeometryController {
     return this.mapGeometryService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.mapGeometryService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMapGeometryDto: UpdateMapGeometryDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMapGeometryDto: UpdateMapGeometryDto,
+  ) {
     return this.mapGeometryService.update(+id, updateMapGeometryDto);
   }
 
