@@ -39,6 +39,9 @@ import { HouseService } from 'src/house/house.service';
 import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
 import { QueueHouseRegistrationController } from 'src/queue-house-registration/queue-house-registration.controller';
 import { HouseController } from 'src/house/house.controller';
+import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
+import { MapGeometryService } from 'src/map-geometry/map-geometry.service';
+import { MapGeometryController } from 'src/map-geometry/map-geometry.controller';
 
 @Module({
   imports: [
@@ -57,6 +60,7 @@ import { HouseController } from 'src/house/house.controller';
       Church,
       HistorySession,
       House,
+      MapGeometry,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -79,6 +83,7 @@ import { HouseController } from 'src/house/house.controller';
     UserService,
     RoleService,
     HouseService,
+    MapGeometryService,
     QueueUserRegistrationService,
     QueueHouseRegistrationService,
     QueueFeatureRequestsService,
@@ -94,6 +99,7 @@ import { HouseController } from 'src/house/house.controller';
     UserController,
     RoleController,
     HouseController,
+    MapGeometryController,
     QueueUserRegistrationController,
     QueueHouseRegistrationController,
     QueueFeatureRequestsController,

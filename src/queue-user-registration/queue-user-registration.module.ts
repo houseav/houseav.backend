@@ -25,6 +25,9 @@ import { HouseService } from 'src/house/house.service';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
 import { QueueHouseRegistrationController } from 'src/queue-house-registration/queue-house-registration.controller';
 import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
+import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
+import { MapGeometryController } from 'src/map-geometry/map-geometry.controller';
+import { MapGeometryService } from 'src/map-geometry/map-geometry.service';
 
 @Module({
   imports: [
@@ -37,6 +40,7 @@ import { QueueHouseRegistrationService } from 'src/queue-house-registration/queu
       Church,
       House,
       QueueHouseRegistration,
+      MapGeometry,
     ]),
     QueueRegister,
     User,
@@ -46,6 +50,7 @@ import { QueueHouseRegistrationService } from 'src/queue-house-registration/queu
   controllers: [
     QueueUserRegistrationController,
     QueueHouseRegistrationController,
+    MapGeometryController,
     UserController,
     RoleController,
     PolicyController,
@@ -56,6 +61,7 @@ import { QueueHouseRegistrationService } from 'src/queue-house-registration/queu
   providers: [
     QueueUserRegistrationService,
     QueueHouseRegistrationService,
+    MapGeometryService,
     UserService,
     RoleService,
     PolicyService,
