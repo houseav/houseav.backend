@@ -8,11 +8,14 @@ import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UnauthorizedException } from '@nestjs/common';
 import { SignInDto } from '../user/dto/sign-in.dto';
-import { User } from '../user/entities/user.entity';
+import * as ms from 'ms';
+
 import {
   mockHistorySessionLogin,
   mockUser,
 } from 'src/test/mock.entities/mock.entities';
+
+jest.mock('ms', () => jest.fn());
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -35,6 +38,7 @@ describe('AuthService', () => {
           provide: JwtService,
           useValue: {
             sign: jest.fn(),
+            signAsync: jest.fn(),
           },
         },
         {
@@ -59,6 +63,27 @@ describe('AuthService', () => {
     jwtService = module.get(JwtService);
     historySessionRepository = module.get(getRepositoryToken(HistorySession));
     configService = module.get(ConfigService);
+
+    // Mock the `ms` function return values
+    ms.mockImplementation((value) => {
+      if (value === process.env.AUTH_DURATION) {
+        return 3600000; // 1 hour in milliseconds
+      }
+      if (value === process.env.AUTH_DURATION_REFRESH) {
+        return 7200000; // 2 hours in milliseconds
+      }
+      return 0;
+    });
+
+    // Mock the `generateAccessToken` method
+    jest
+      .spyOn(authService, 'generateAccessToken')
+      .mockResolvedValue('mockAccessToken');
+
+    // Mock the `generateRefreshToken` method
+    jest
+      .spyOn(authService, 'generateRefreshToken')
+      .mockResolvedValue('mockRefreshAccessToken');
   });
 
   it('should successfully login a user', async () => {
@@ -70,6 +95,7 @@ describe('AuthService', () => {
     userService.findByEmail.mockResolvedValue(mockUser);
     historySessionRepository.findOne.mockResolvedValue(mockHistorySessionLogin);
     jwtService.sign.mockReturnValue('mockAccessToken');
+    jwtService.signAsync.mockResolvedValue('mockRefreshAccessToken');
     configService.get.mockReturnValue('1h');
     historySessionRepository.update.mockResolvedValue(null);
     historySessionRepository.save.mockResolvedValue(null);
@@ -78,7 +104,7 @@ describe('AuthService', () => {
 
     expect(result).toEqual({
       access_token: 'mockAccessToken',
-      refresh_token: 'mockAccessToken',
+      refresh_token: 'mockRefreshAccessToken',
       user: mockUser,
     });
     expect(historySessionRepository.update).toHaveBeenCalledWith(
@@ -134,7 +160,7 @@ describe('AuthService', () => {
 
     expect(result).toEqual({
       access_token: 'mockAccessToken',
-      refresh_token: 'mockAccessToken',
+      refresh_token: 'mockRefreshAccessToken',
       user: mockUser,
     });
     expect(historySessionRepository.save).toHaveBeenCalled();

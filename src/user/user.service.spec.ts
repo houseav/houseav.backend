@@ -8,8 +8,10 @@ import { Church } from 'src/church/entities/church.entity';
 import { QueueRegister } from 'src/queue-user-registration/entities/queue-register.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
+import { House } from 'src/house/entities/house.entity';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserWithoutPasswordDto } from './dto/create-user.dto';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
 
 const UserRegistrationDto = {
   userInfo: {
@@ -40,7 +42,7 @@ const UserRegistrationDto = {
   },
 };
 
-const updateUserDto: CreateUserDto = {
+const updateUserDto: CreateUserWithoutPasswordDto = {
   id: 1,
   username: 'updatedUser',
   email: 'updated@email.com',
@@ -91,6 +93,10 @@ describe('UserModule', () => {
     save: jest.fn(),
   };
 
+  const mockQueueHouseRepository = {
+    save: jest.fn(),
+  };
+
   const mockPolicyRepository = {
     findOne: jest.fn(),
   };
@@ -98,6 +104,11 @@ describe('UserModule', () => {
   const mockReferenceLetterRepository = {
     save: jest.fn(),
     update: jest.fn(),
+  };
+
+  const mockHouseRepository = {
+    findOne: jest.fn(),
+    save: jest.fn(),
   };
 
   // Mocking the MailgunService
@@ -127,12 +138,20 @@ describe('UserModule', () => {
           useValue: mockQueueRegisterRepository,
         },
         {
+          provide: getRepositoryToken(QueueHouseRegistration),
+          useValue: mockQueueHouseRepository,
+        },
+        {
           provide: getRepositoryToken(Policy),
           useValue: mockPolicyRepository,
         },
         {
           provide: getRepositoryToken(ReferenceLetter),
           useValue: mockReferenceLetterRepository,
+        },
+        {
+          provide: getRepositoryToken(House),
+          useValue: mockHouseRepository,
         },
         {
           provide: MailgunService,

@@ -4,6 +4,8 @@ import { Church } from 'src/church/entities/church.entity';
 
 // Common DTO Fields
 export class BaseUserDto {
+  id?: number;
+
   @ApiProperty({ example: `user` })
   @IsString({ message: 'Username must be a string' })
   @IsNotEmpty({ message: 'Username must be validated' })
