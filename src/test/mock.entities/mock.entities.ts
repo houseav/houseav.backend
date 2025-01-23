@@ -115,6 +115,47 @@ const mockHouse: House = {
   fkQueueHouseRegistrationId: null, // This will be set later
 };
 
+// Mock House Creation Dto
+const mockCreateHouseDto = {
+  title: 'Test House',
+  description: 'Test Description',
+  address: 'Test Address',
+  zipcode: '12345',
+  streetNumber: '10',
+  city: 'Test City',
+  state: 'Test State',
+  bathrooms: 2,
+  bedrooms: 3,
+  furnished: true,
+  parking: true,
+  type: 'villa',
+  wifi: true,
+  imageUrls: 'https://example.com/image.jpg',
+  availability: true,
+  availabilityDateStart: new Date(),
+  availabilityDateEnd: new Date(new Date().setDate(new Date().getDate() + 30)),
+  sleepPlace: 4,
+  allergy: 'None',
+  animals: 'false',
+  queueHouseId: 1,
+  requestRoommateType: 'coppie',
+  transportation: 'auto',
+  zone: 'zona',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  userId: 1,
+};
+
+// Mock QueueHouseRegistration
+const mockQueueHouseRegistration = {
+  id: 1,
+  verified: true,
+  fkHouseId: mockHouse,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+}
+
+
 // Mock MapGeometry
 const mockMapGeometry: MapGeometry = {
   id: 1,
@@ -132,7 +173,7 @@ const mockMapGeometry: MapGeometry = {
 // Mock User
 const mockUser: User = {
   id: 1,
-  email: 'lucaimbalzano@gmail.com',
+  email: 'example@gmail.com',
   avatar: 'default',
   username: 'admin',
   prefix: '+39',
@@ -173,6 +214,8 @@ export {
   mockQueueRegister,
   mockReferenceLetter,
   mockHistorySessionLogin,
+  mockCreateHouseDto,
   mockHouse,
+  mockQueueHouseRegistration,
   mockMapGeometry,
 };

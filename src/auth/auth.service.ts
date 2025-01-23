@@ -171,7 +171,7 @@ export class AuthService {
           },
         );
 
-      if (userHistorySessions) {
+        if (userHistorySessions) {
           // Invalidate jwt
           userHistorySessions.access_token = access_token;
           userHistorySessions.refresh_token = refresh_token;
