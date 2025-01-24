@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { User } from 'src/user/entities/user.entity';
 
 export class CreateHouseDto {
   @ApiProperty({ example: `titlel` })
@@ -134,10 +136,10 @@ export class CreateHouseDto {
   updatedAt?: Date;
 
   @ApiProperty({ example: `1` })
-  userId: number;
+  userId: number | User;
 
   @ApiProperty({ example: `1` })
-  queueHouseId: number;
+  queueHouseId: number | QueueHouseRegistration;
 
   @ApiProperty({ example: `false` })
   @IsBoolean()

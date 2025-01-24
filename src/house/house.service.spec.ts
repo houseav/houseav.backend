@@ -1,24 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { House } from './entities/house.entity';
-import { HouseService } from './house.service';
-import { UserService } from 'src/user/user.service';
-import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
-import { MapGeometryService } from 'src/map-geometry/map-geometry.service';
+import { User } from 'src/user/entities/user.entity';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
 import {
   mockCreateHouseDto,
   mockHouse,
   mockQueueHouseRegistration,
+  mockUser,
 } from 'src/test/mock.entities/mock.entities';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
-import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
-import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
+
+import { UserService } from 'src/user/user.service';
+import { HouseService } from './house.service';
+import { MapGeometryService } from 'src/map-geometry/map-geometry.service';
+import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
 
 describe('HouseService', () => {
   let houseService: HouseService;
   let houseRepository: jest.Mocked<Repository<House>>;
   let userService: jest.Mocked<UserService>;
+  let userRepository: jest.Mocked<Repository<User>>;
   let queueHouseRegistrationService: jest.Mocked<QueueHouseRegistrationService>;
   let queueHouseRegistrationRepository: jest.Mocked<
     Repository<QueueHouseRegistration>
@@ -34,6 +38,7 @@ describe('HouseService', () => {
           provide: UserService,
           useValue: {
             findByEmail: jest.fn(),
+            findOne: jest.fn(),
           },
         },
         {
@@ -82,7 +87,13 @@ describe('HouseService', () => {
     }).compile();
 
     houseService = module.get<HouseService>(HouseService);
+    houseRepository = module.get<jest.Mocked<Repository<House>>>(
+      getRepositoryToken(House),
+    );
     userService = module.get(UserService);
+    userRepository = module.get<jest.Mocked<Repository<User>>>(
+      getRepositoryToken(User),
+    );
     queueHouseRegistrationService = module.get(QueueHouseRegistrationService);
     mapGeometryService = module.get(MapGeometryService);
     mapGeometryRepository = module.get<jest.Mocked<Repository<MapGeometry>>>(
@@ -91,9 +102,6 @@ describe('HouseService', () => {
     queueHouseRegistrationRepository = module.get<
       jest.Mocked<Repository<QueueHouseRegistration>>
     >(getRepositoryToken(QueueHouseRegistration));
-    houseRepository = module.get<jest.Mocked<Repository<House>>>(
-      getRepositoryToken(House),
-    );
   });
 
   describe('create', () => {
@@ -122,6 +130,90 @@ describe('HouseService', () => {
       );
       expect(mapGeometryRepository.save).toHaveBeenCalled();
       expect(queueHouseRegistrationRepository.save).toHaveBeenCalled();
+    });
+
+    it('should return error houseQueueSaved null', async () => {
+      jest
+        .spyOn(houseService, 'checkUserGetHouse')
+        .mockResolvedValue(mockHouse);
+      houseRepository.save.mockResolvedValue(mockHouse);
+      mapGeometryRepository.save.mockResolvedValue({
+        id: 1,
+        latitude: '41.8719',
+        longitude: '12.5674',
+        geometry: {},
+      });
+
+      queueHouseRegistrationRepository.save.mockReturnValue(null);
+      expect(await houseService.create(mockCreateHouseDto)).toEqual({
+        message: 'Error while adding house',
+      });
+      expect(houseService.checkUserGetHouse).toHaveBeenCalledWith(
+        mockCreateHouseDto,
+        true,
+        null,
+      );
+      expect(mapGeometryRepository.save).toHaveBeenCalled();
+      expect(queueHouseRegistrationRepository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('checkUserGetHouse', () => {
+    it('User not found', async () => {
+      userService.findOne.mockReturnValue(null);
+      await expect(
+        houseService.checkUserGetHouse(mockCreateHouseDto, false, null),
+      ).rejects.toThrow(Error);
+    });
+
+    it('Error finding House', async () => {
+      userRepository.findOne.mockResolvedValue(Promise.resolve(mockUser));
+      houseRepository.findOne.mockResolvedValue(null);
+      const mockCreationHouseDtoCopy = { ...mockCreateHouseDto };
+      mockCreationHouseDtoCopy.queueHouseId = null;
+      await expect(
+        houseService.checkUserGetHouse(mockCreationHouseDtoCopy, false, 1),
+      ).rejects.toThrow(Error);
+      expect(userRepository.findOne).toHaveBeenCalled();
+    });
+
+    it('Queue house not found', async () => {
+      userRepository.findOne.mockResolvedValue(Promise.resolve(mockUser));
+      houseRepository.findOne.mockResolvedValue(null);
+      queueHouseRegistrationRepository.findOne.mockResolvedValue(null);
+      await expect(
+        houseService.checkUserGetHouse(mockCreateHouseDto, false, 1),
+      ).rejects.toThrow(Error);
+      expect(userRepository.findOne).toHaveBeenCalled();
+    });
+
+    it('Queue house not found', async () => {
+      userRepository.findOne.mockResolvedValue(Promise.resolve(mockUser));
+      houseRepository.findOne.mockResolvedValue(null);
+      queueHouseRegistrationRepository.findOne.mockResolvedValue(null);
+      const result = await houseService.checkUserGetHouse(
+        mockCreateHouseDto,
+        true,
+        1,
+      );
+      expect(result).toBeInstanceOf(House);
+      expect(userRepository.findOne).toHaveBeenCalled();
+    });
+  });
+
+  describe('findOneWithPassword', () => {
+    it('House not verified yet', async () => {
+      const mockHouseCopy = { ...mockHouse };
+      mockHouseCopy.fkQueueHouseRegistrationId = {
+        verified: false,
+        fkHouseId: mockHouse,
+      };
+      houseRepository.findOne.mockResolvedValue(mockHouseCopy);
+      const result = await houseService.findOneWithPassword(1);
+      expect(result).toEqual({
+        verified: false,
+        message: 'House not verified yet',
+      });
     });
   });
 });
