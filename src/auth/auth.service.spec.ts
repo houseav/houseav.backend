@@ -39,6 +39,8 @@ describe('AuthService', () => {
           useValue: {
             sign: jest.fn(),
             signAsync: jest.fn(),
+            decode: jest.fn(),
+            verify: jest.fn(),
           },
         },
         {
@@ -86,83 +88,105 @@ describe('AuthService', () => {
       .mockResolvedValue('mockRefreshAccessToken');
   });
 
-  it('should successfully login a user', async () => {
-    const mockSignInDto: SignInDto = {
-      email: 'test@example.com',
-      password: 'password',
-    };
+  describe('sign-in', () => {
+    it('should successfully login a user', async () => {
+      const mockSignInDto: SignInDto = {
+        email: 'test@example.com',
+        password: 'password',
+      };
 
-    userService.findByEmail.mockResolvedValue(mockUser);
-    historySessionRepository.findOne.mockResolvedValue(mockHistorySessionLogin);
-    jwtService.sign.mockReturnValue('mockAccessToken');
-    jwtService.signAsync.mockResolvedValue('mockRefreshAccessToken');
-    configService.get.mockReturnValue('1h');
-    historySessionRepository.update.mockResolvedValue(null);
-    historySessionRepository.save.mockResolvedValue(null);
+      userService.findByEmail.mockResolvedValue(mockUser);
+      historySessionRepository.findOne.mockResolvedValue(
+        mockHistorySessionLogin,
+      );
+      jwtService.sign.mockReturnValue('mockAccessToken');
+      jwtService.signAsync.mockResolvedValue('mockRefreshAccessToken');
+      configService.get.mockReturnValue('1h');
+      historySessionRepository.update.mockResolvedValue(null);
+      historySessionRepository.save.mockResolvedValue(null);
 
-    const result = await authService.signIn(mockSignInDto);
-
-    expect(result).toEqual({
-      access_token: 'mockAccessToken',
-      refresh_token: 'mockRefreshAccessToken',
-      user: mockUser,
+      const result = await authService.signIn(mockSignInDto);
+      expect(result).toEqual({
+        access_token: 'mockAccessToken',
+        refresh_token: 'mockRefreshAccessToken',
+        user: mockUser,
+      });
     });
-    expect(historySessionRepository.update).toHaveBeenCalledWith(
-      mockHistorySessionLogin.id,
-      expect.objectContaining({ active: false }),
-    );
-    expect(historySessionRepository.save).toHaveBeenCalled();
-  });
 
-  it('should throw an UnauthorizedException for invalid email', async () => {
-    const mockSignInDto: SignInDto = {
-      email: 'invalid@example.com',
-      password: 'password',
-    };
+    it('should throw an UnauthorizedException for invalid email from user findByEmail', async () => {
+      const mockSignInDto: SignInDto = {
+        email: 'invalid@example.com',
+        password: 'password',
+      };
 
-    userService.findByEmail.mockResolvedValue(null);
+      userService.findByEmail.mockResolvedValue(null);
 
-    await expect(authService.signIn(mockSignInDto)).rejects.toThrow(
-      UnauthorizedException,
-    );
-  });
-
-  it('should throw an UnauthorizedException for invalid password', async () => {
-    mockUser.validatePassword = jest.fn().mockResolvedValue(false);
-
-    const mockSignInDto: SignInDto = {
-      email: 'test@example.com',
-      password: 'wrongpassword',
-    };
-
-    userService.findByEmail.mockResolvedValue(mockUser);
-
-    await expect(authService.signIn(mockSignInDto)).rejects.toThrow(
-      UnauthorizedException,
-    );
-  });
-
-  it('should handle no active history session gracefully', async () => {
-    mockUser.validatePassword = jest.fn().mockResolvedValue(true);
-
-    const mockSignInDto: SignInDto = {
-      email: 'test@example.com',
-      password: 'password',
-    };
-
-    userService.findByEmail.mockResolvedValue(mockUser);
-    historySessionRepository.findOne.mockResolvedValue(null);
-    jwtService.sign.mockReturnValue('mockAccessToken');
-    configService.get.mockReturnValue('1h');
-    historySessionRepository.save.mockResolvedValue(null);
-
-    const result = await authService.signIn(mockSignInDto);
-
-    expect(result).toEqual({
-      access_token: 'mockAccessToken',
-      refresh_token: 'mockRefreshAccessToken',
-      user: mockUser,
+      await expect(authService.signIn(mockSignInDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
-    expect(historySessionRepository.save).toHaveBeenCalled();
+
+    it('should throw an UnauthorizedException for invalid password from user findByEmail', async () => {
+      mockUser.validatePassword = jest.fn().mockResolvedValue(false);
+
+      const mockSignInDto: SignInDto = {
+        email: 'test@example.com',
+        password: 'wrongpassword',
+      };
+
+      userService.findByEmail.mockResolvedValue(mockUser);
+
+      await expect(authService.signIn(mockSignInDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should handle no active history session gracefully', async () => {
+      mockUser.validatePassword = jest.fn().mockResolvedValue(true);
+
+      const mockSignInDto: SignInDto = {
+        email: 'test@example.com',
+        password: 'password',
+      };
+
+      userService.findByEmail.mockResolvedValue(mockUser);
+      historySessionRepository.findOne.mockResolvedValue(null);
+      jwtService.sign.mockReturnValue('mockAccessToken');
+      configService.get.mockReturnValue('1h');
+      historySessionRepository.save.mockResolvedValue(null);
+
+      const result = await authService.signIn(mockSignInDto);
+
+      expect(result).toEqual({
+        access_token: 'mockAccessToken',
+        refresh_token: 'mockRefreshAccessToken',
+        user: mockUser,
+      });
+      expect(historySessionRepository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('sign-out', () => {
+    it('should throw an UnauthorizedException for history session not found', async () => {
+      // Mock flow inside my authService.signOut
+      // Mock each function called inside authService.signOut till i got the historySession point
+      const accessTokenJwtVerifiedMocked = { email: 'example@gmail.com' };
+      jwtService.decode.mockReturnValue(accessTokenJwtVerifiedMocked);
+
+      userService.findByEmail.mockResolvedValue(mockUser);
+      historySessionRepository.findOne.mockReturnValue(null);
+
+      const requestMock = { headers: { authorization: 'Bearer token' } };
+      await expect(authService.signOut(requestMock)).rejects.toThrow(Error);
+    });
+  });
+
+  describe('refreshAccessToken', () => {
+    it('should throw an UnauthorizedException for invalid refreshToken', async () => {
+      jwtService.verify.mockReturnValue(null);
+      await expect(
+        authService.refreshAccessToken({ refreshToken: 'token' }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
   });
 });

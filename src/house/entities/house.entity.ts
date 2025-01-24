@@ -69,8 +69,9 @@ export class House {
   @CreateDateColumn({
     type: 'timestamp without time zone',
     default: () => 'now()',
+    nullable: true,
   })
-  availabilityDateStart: Date;
+  availabilityDateStart?: Date;
 
   @Column({ nullable: true })
   availabilityDateEnd?: Date;

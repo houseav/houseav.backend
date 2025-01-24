@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { User } from 'src/user/entities/user.entity';
 
 export class CreateHouseDto {
   @ApiProperty({ example: `titlel` })
@@ -27,20 +29,18 @@ export class CreateHouseDto {
   address: string;
 
   @ApiProperty({ example: `zipcode` })
-  @IsString({ message: 'Zipcode must be a string', always: true })
   @IsNotEmpty({
     message: 'Zipcode must be validated',
     always: true,
   })
-  zipcode: string;
+  zipcode: string | number;
 
   @ApiProperty({ example: `streetNumber` })
-  @IsString({ message: 'Streetnumber must be a string', always: true })
   @IsNotEmpty({
     message: 'StreetNumber must be validated',
     always: true,
   })
-  streetNumber: string;
+  streetNumber: string | number;
 
   @ApiProperty({ example: `city` })
   @IsString({ message: 'City must be a string', always: true })
@@ -134,10 +134,10 @@ export class CreateHouseDto {
   updatedAt?: Date;
 
   @ApiProperty({ example: `1` })
-  userId: number;
+  userId: number | User;
 
   @ApiProperty({ example: `1` })
-  queueHouseId: number;
+  queueHouseId: number | QueueHouseRegistration;
 
   @ApiProperty({ example: `false` })
   @IsBoolean()

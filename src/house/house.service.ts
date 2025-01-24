@@ -148,34 +148,14 @@ export class HouseService {
     }
   }
 
-  async findOneByUserTkn(idHouse: number): Promise<House | any> {
-    try {
-      console.log('House');
-      // Filter the user's houses to find the one with the matching idHouse
-      // const houseFounded = user.fkHouseId.find((house) => house.id === idHouse);
-
-      // if (houseFounded.fkQueueHouseRegistrationId.verified == false) {
-      //   return { verified: false, message: 'House not verified yet' };
-      // }
-
-      // if (!houseFounded) {
-      //   throw new Error('House not found for this user!');
-      // }
-
-      // return houseFounded;
-    } catch (error) {
-      console.error('Error while findByUser: ' + error);
-    }
-  }
-
   async update(
     id: number,
     updateHouseDto: UpdateHouseDto,
   ): Promise<HouseResponse> {
     try {
-      let house = await this.checkUserGetHouse(updateHouseDto, false, id);
+      const house = await this.checkUserGetHouse(updateHouseDto, false, id);
       if (house.fkQueueHouseRegistrationId) {
-        house = await this.houseRepository.update(id, house);
+        await this.houseRepository.update(id, house);
         return { message: `House updated with success` };
       } else {
         return { message: `Error while updating house` };
@@ -210,11 +190,19 @@ export class HouseService {
       verified: true,
     });
 
-    const searchTerm = query.searchTerm || '';
-    if (searchTerm.trim() !== '') {
+    if (
+      query &&
+      query.searchTerm &&
+      typeof query.searchTerm === 'string' &&
+      query.searchTerm.trim() !== ''
+    ) {
       queryBuilder.where('house.title ILIKE :searchTerm', {
-        searchTerm: `%${searchTerm}%`,
+        searchTerm: `%${query.searchTerm}%`,
       });
+    } else {
+      if (query) {
+        delete query.searchTerm;
+      }
     }
 
     if (query.wifi !== null && query.wifi !== undefined) {
@@ -267,7 +255,11 @@ export class HouseService {
     return await queryBuilder.getMany();
   }
 
-  async checkUserGetHouse(houseDto, isCreating, idHouse: number): Promise<any> {
+  async checkUserGetHouse(
+    houseDto: any,
+    isCreating: boolean,
+    idHouse: number,
+  ): Promise<House> {
     const {
       title,
       description,
@@ -316,11 +308,11 @@ export class HouseService {
       if (houseInDb) {
         queueHouseId = houseInDb.fkQueueHouseRegistrationId.id;
       } else {
-        throw new Error('Error finding QueuHouseRegistration');
+        throw new Error('Error finding House');
       }
     }
 
-    let house = null;
+    // let house = null;
     let houseQueue = null;
     if (!isCreating) {
       houseQueue = await this.queueHouseRegistrationRepository.findOne({
@@ -332,35 +324,67 @@ export class HouseService {
       }
     }
 
-    house = {
-      title: title,
-      description: description,
-      address: address,
-      zipcode: zipcode,
-      streetNumber: streetNumber,
-      city: city,
-      state: state,
-      bathrooms: bathrooms,
-      bedrooms: bedrooms,
-      furnished: furnished,
-      parking: parking,
-      type: type,
-      wifi: wifi,
-      imageUrls: imageUrls,
-      availability: availability,
-      availabilityDateStart: availabilityDateStart,
-      availabilityDateEnd: availabilityDateEnd,
-      sleepPlace: sleepPlace,
-      allergy: allergy,
-      animali: animali,
-      requestRoommateType: requestRoommateType,
-      transportation: transportation,
-      zone: zone,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      fkUserId: user,
-      fkQueueHouseRegistrationId: houseQueue,
-    };
+    // house = {
+    //   title: title,
+    //   description: description,
+    //   address: address,
+    //   zipcode: zipcode,
+    //   streetNumber: streetNumber,
+    //   city: city,
+    //   state: state,
+    //   bathrooms: bathrooms,
+    //   bedrooms: bedrooms,
+    //   furnished: furnished,
+    //   parking: parking,
+    //   type: type,
+    //   wifi: wifi,
+    //   imageUrls: imageUrls,
+    //   availability: availability,
+    //   availabilityDateStart: availabilityDateStart,
+    //   availabilityDateEnd: availabilityDateEnd,
+    //   sleepPlace: sleepPlace,
+    //   allergy: allergy,
+    //   animali: animali,
+    //   requestRoommateType: requestRoommateType,
+    //   transportation: transportation,
+    //   zone: zone,
+    //   createdAt: createdAt,
+    //   updatedAt: updatedAt,
+    //   fkUserId: user,
+    //   fkQueueHouseRegistrationId: houseQueue,
+    // };
+    // return house;
+    const house = new House();
+    house.title = title;
+    house.description = description;
+    house.address = address;
+    house.zipcode = zipcode;
+    house.streetNumber = streetNumber;
+    house.city = city;
+    house.state = state;
+    house.bathrooms = bathrooms;
+    house.bedrooms = bedrooms;
+    house.furnished = furnished;
+    house.parking = parking;
+    house.type = type;
+    house.wifi = wifi;
+    house.imageUrls = imageUrls;
+    house.availability = availability;
+    house.availabilityDateStart =
+      availabilityDateStart == '' ? null : availabilityDateStart;
+    house.availabilityDateEnd =
+      availabilityDateEnd == '' ? null : availabilityDateEnd;
+    house.sleepPlace = sleepPlace;
+    house.allergy = allergy == '' ? null : allergy;
+    house.animali = animali;
+    house.requestRoommateType = requestRoommateType;
+    house.transportation = transportation == '' ? null : transportation;
+    house.zone = zone == '' ? null : zone;
+    house.createdAt = createdAt;
+    house.updatedAt = updatedAt == null ? new Date() : updatedAt;
+    house.fkUserId = userId;
+    house.fkQueueHouseRegistrationId = queueHouseId;
+
     return house;
   }
 }
