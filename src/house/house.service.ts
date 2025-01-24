@@ -191,15 +191,18 @@ export class HouseService {
     });
 
     if (
-      query.searchTerm.trim() !== '' &&
-      query.searchTerm !== null &&
-      query.searchTerm !== undefined
+      query &&
+      query.searchTerm &&
+      typeof query.searchTerm === 'string' &&
+      query.searchTerm.trim() !== ''
     ) {
       queryBuilder.where('house.title ILIKE :searchTerm', {
         searchTerm: `%${query.searchTerm}%`,
       });
     } else {
-      delete query.searchTerm;
+      if (query) {
+        delete query.searchTerm;
+      }
     }
 
     if (query.wifi !== null && query.wifi !== undefined) {
@@ -367,16 +370,18 @@ export class HouseService {
     house.wifi = wifi;
     house.imageUrls = imageUrls;
     house.availability = availability;
-    house.availabilityDateStart = availabilityDateStart;
-    house.availabilityDateEnd = availabilityDateEnd;
+    house.availabilityDateStart =
+      availabilityDateStart == '' ? null : availabilityDateStart;
+    house.availabilityDateEnd =
+      availabilityDateEnd == '' ? null : availabilityDateEnd;
     house.sleepPlace = sleepPlace;
-    house.allergy = allergy;
+    house.allergy = allergy == '' ? null : allergy;
     house.animali = animali;
     house.requestRoommateType = requestRoommateType;
-    house.transportation = transportation;
-    house.zone = zone;
+    house.transportation = transportation == '' ? null : transportation;
+    house.zone = zone == '' ? null : zone;
     house.createdAt = createdAt;
-    house.updatedAt = updatedAt;
+    house.updatedAt = updatedAt == null ? new Date() : updatedAt;
     house.fkUserId = userId;
     house.fkQueueHouseRegistrationId = queueHouseId;
 

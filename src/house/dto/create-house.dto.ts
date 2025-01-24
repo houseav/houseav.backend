@@ -29,20 +29,18 @@ export class CreateHouseDto {
   address: string;
 
   @ApiProperty({ example: `zipcode` })
-  @IsString({ message: 'Zipcode must be a string', always: true })
   @IsNotEmpty({
     message: 'Zipcode must be validated',
     always: true,
   })
-  zipcode: string;
+  zipcode: string | number;
 
   @ApiProperty({ example: `streetNumber` })
-  @IsString({ message: 'Streetnumber must be a string', always: true })
   @IsNotEmpty({
     message: 'StreetNumber must be validated',
     always: true,
   })
-  streetNumber: string;
+  streetNumber: string | number;
 
   @ApiProperty({ example: `city` })
   @IsString({ message: 'City must be a string', always: true })
