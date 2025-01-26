@@ -5,10 +5,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
-import {
-  AdminVerifier,
-  QueueRegister,
-} from '../queue-user-registration/entities/queue-register.entity';
+import { QueueRegister } from '../queue-user-registration/entities/queue-register.entity';
 import { Church } from 'src/church/entities/church.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
@@ -142,6 +139,37 @@ export class UserService {
     }
   }
 
+  async update(
+    id: number,
+    updateUserDto: CreateUserWithoutPasswordDto,
+  ): Promise<User> {
+    // I allow the user to update the password only trough forgot-password endpoint
+    delete updateUserDto.password;
+
+    await this.userRepository.update(id, updateUserDto);
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: { fkRoleId: true },
+    });
+  }
+
+  findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
+  findOne(id: number): Promise<User> {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { email },
+      relations: {
+        fkRoleId: true,
+      },
+    });
+  }
+
   async getDashboardMainData(): Promise<DashboardMainData> {
     try {
       const numberUsers = await this.userRepository.find();
@@ -161,42 +189,6 @@ export class UserService {
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
-  findOne(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id } });
-  }
-
-  async update(
-    id: number,
-    updateUserDto: CreateUserWithoutPasswordDto,
-  ): Promise<User> {
-    // I allow the user to update the password only trough forgot-password endpoint
-    delete updateUserDto.password;
-
-    await this.userRepository.update(id, updateUserDto);
-    return await this.userRepository.findOne({
-      where: { id },
-      relations: { fkRoleId: true },
-    });
-  }
-
-  async remove(id: number): Promise<string> {
-    await this.userRepository.delete(id);
-    return `User deleted with success`;
-  }
-
-  async findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({
-      where: { email },
-      relations: {
-        fkRoleId: true,
-      },
-    });
   }
 
   async getChurchesFromViewAdminChurches(id: number): Promise<User | any> {
@@ -336,5 +328,10 @@ export class UserService {
     } else {
       return userNotAuth;
     }
+  }
+
+  async remove(id: number): Promise<string> {
+    await this.userRepository.delete(id);
+    return `User deleted with success`;
   }
 }

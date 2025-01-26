@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateHouseDto } from './dto/create-house.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -119,6 +119,27 @@ export class HouseService {
       return user.fkHouseId;
     } catch (error) {
       console.error('Error while findByUser: ' + error);
+    }
+  }
+
+  async findHouseOwnershipByUserIdAndHouseId(
+    idUser: number,
+    idHouse: number,
+  ): Promise<House | boolean> {
+    try {
+      const house: House = await this.houseRepository.findOne({
+        where: { id: idHouse },
+        relations: { fkUserId: true, fkQueueHouseRegistrationId: true },
+      });
+      if (!house) throw new Error('House not found');
+      if (house?.fkUserId.id == idUser) {
+        return house;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log('Error occured while findHouseOwnership, ', error);
+      throw new Error(error);
     }
   }
 

@@ -9,11 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { ReferenceLetter } from '../../reference-letter/entities/reference-letter.entity';
-
-export enum AdminVerifier {
-  ADMIN = 'admin',
-  SUPER_ADMIN = 'super-admin',
-}
+import { ADMIN_DASHBOARD_VERIFIER } from 'utils/constants';
 
 @Entity('Queue-Register')
 export class QueueRegister {
@@ -25,14 +21,14 @@ export class QueueRegister {
 
   /**
    *
-   * @adminVerifier will define what is able to see in the admin views
+   * @ADMIN_DASHBOARD_VERIFIER will define what is able to see in the admin views
    * it can be:
    * - admin
    * - super-admin
    *
    */
-  @Column({ type: 'enum', enum: AdminVerifier, nullable: true })
-  adminVerifier?: AdminVerifier;
+  @Column({ type: 'enum', enum: ADMIN_DASHBOARD_VERIFIER, nullable: true })
+  adminVerifier?: ADMIN_DASHBOARD_VERIFIER;
 
   @OneToOne(() => User, (user) => user.fkQueueRegisterId)
   @JoinColumn([

@@ -7,8 +7,9 @@ import { User } from 'src/user/entities/user.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
 import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
 import {
-  mockCreateHouseDto,
+  getMockHouseObject,
   mockHouse,
+  mockCreateHouseDto,
   mockQueueHouseRegistration,
   mockUser,
 } from 'src/test/mock.entities/mock.entities';
@@ -62,6 +63,7 @@ describe('HouseService', () => {
             update: jest.fn(),
             delete: jest.fn(),
             find: jest.fn(),
+            findHouseOwnershipByUserIdAndHouseId: jest.fn(),
           },
         },
         {
@@ -214,6 +216,20 @@ describe('HouseService', () => {
         verified: false,
         message: 'House not verified yet',
       });
+    });
+  });
+
+  describe('findOne', () => {
+    it('find one to update it', async () => {
+      // I need to check the user from the bearer token
+      // call the house and check if the user own it
+      houseRepository.findOne.mockResolvedValue(getMockHouseObject());
+      const result = await houseService.findHouseOwnershipByUserIdAndHouseId(
+        1,
+        2,
+      );
+      expect(result).toBeInstanceOf(House);
+      expect(houseRepository.findOne).toHaveBeenCalled();
     });
   });
 });

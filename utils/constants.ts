@@ -7,3 +7,8 @@ export const FORGOT_PASSWORD_ENDPOINT =
   'https://houseavfrontend-production.up.railway.app/forgot-password';
 export const KICKOUT_USER_ENDPOINT =
   'https://houseavfrontend-production.up.railway.app/profile-verified';
+
+export enum ADMIN_DASHBOARD_VERIFIER {
+  ADMIN = 'admin',
+  SUPER_ADMIN = 'super-admin',
+}

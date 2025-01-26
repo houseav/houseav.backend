@@ -1,15 +1,14 @@
 import { User } from 'src/user/entities/user.entity';
 import { Policy } from 'src/policy/entities/policy.entity';
-import {
-  AdminVerifier,
-  QueueRegister,
-} from 'src/queue-user-registration/entities/queue-register.entity';
+import { QueueRegister } from 'src/queue-user-registration/entities/queue-register.entity';
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { HistorySession } from 'src/history-sessions/entities/history-session.entity';
 import { House } from 'src/house/entities/house.entity';
 import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
+import { Church } from 'src/church/entities/church.entity';
+import { ADMIN_DASHBOARD_VERIFIER } from 'utils/constants';
 
 // Mock Role
 const mockRole: Role = {
@@ -52,7 +51,7 @@ const mockReferenceLetter: ReferenceLetter = {
 const mockQueueRegister: QueueRegister = {
   id: 1,
   verified: true,
-  adminVerifier: AdminVerifier.SUPER_ADMIN,
+  adminVerifier: ADMIN_DASHBOARD_VERIFIER.SUPER_ADMIN,
   fkUserId: null, // This will be set later
   fkReferenceLetterId: mockReferenceLetter,
   createdAt: new Date(),
@@ -80,6 +79,13 @@ const mockHistorySessionLogin: HistorySession = {
   createdAt: new Date(),
   updatedAt: new Date(),
   fkUserId: null, // This will be set later
+};
+
+const mockChurch: Church = {
+  id: 1,
+  name: 'Test Church',
+  address: '123 Church St',
+  fkUserId: [],
 };
 
 // Mock House
@@ -113,6 +119,56 @@ const mockHouse: House = {
   fkUserId: null, // This will be set later
   fkMapId: null, // This will be set later
   fkQueueHouseRegistrationId: null, // This will be set later
+};
+
+// Mock User
+const mockUserForHouseEntity: User = {
+  id: 1,
+  email: 'test@example.com',
+  username: 'testuser',
+  password: 'password',
+  validatePassword: jest.fn().mockResolvedValue(true) as jest.Mock, // Mock validatePassword method
+  fkRoleId: mockRole,
+  fkChurchId: mockChurch,
+  fkQueueRegisterId: mockQueueRegister,
+  fkHistorySessions: [],
+};
+
+// Mock House Object
+const getMockHouseObject = (): House => {
+  const mockHouseObject: House = new House();
+  mockHouseObject.id = 1;
+  mockHouseObject.title = 'Test House';
+  mockHouseObject.description = 'Test Description';
+  mockHouseObject.address = 'Test Address';
+  mockHouseObject.zipcode = 12345;
+  mockHouseObject.streetNumber = 10;
+  mockHouseObject.city = 'Test City';
+  mockHouseObject.state = 'Test State';
+  mockHouseObject.bathrooms = 2;
+  mockHouseObject.bedrooms = 3;
+  mockHouseObject.furnished = true;
+  mockHouseObject.parking = true;
+  mockHouseObject.type = 'villa';
+  mockHouseObject.wifi = true;
+  mockHouseObject.imageUrls = 'https://example.com/image.jpg';
+  mockHouseObject.availability = true;
+  mockHouseObject.availabilityDateStart = new Date();
+  mockHouseObject.availabilityDateEnd = new Date(
+    new Date().setDate(new Date().getDate() + 30),
+  );
+  mockHouseObject.sleepPlace = 4;
+  mockHouseObject.allergy = 'None';
+  mockHouseObject.animali = 'None';
+  mockHouseObject.requestRoommateType = 'coppie';
+  mockHouseObject.transportation = 'auto';
+  mockHouseObject.zone = 'zona';
+  mockHouseObject.createdAt = new Date();
+  mockHouseObject.updatedAt = new Date();
+  mockHouseObject.fkUserId = mockUserForHouseEntity;
+  mockHouseObject.fkQueueHouseRegistrationId = new QueueHouseRegistration();
+  mockHouseObject.fkMapId = new MapGeometry();
+  return mockHouseObject;
 };
 
 // Mock House Creation Dto
@@ -153,8 +209,7 @@ const mockQueueHouseRegistration = {
   fkHouseId: mockHouse,
   createdAt: new Date(),
   updatedAt: new Date(),
-}
-
+};
 
 // Mock MapGeometry
 const mockMapGeometry: MapGeometry = {
@@ -216,6 +271,7 @@ export {
   mockHistorySessionLogin,
   mockCreateHouseDto,
   mockHouse,
+  getMockHouseObject,
   mockQueueHouseRegistration,
   mockMapGeometry,
 };
