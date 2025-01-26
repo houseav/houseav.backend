@@ -89,6 +89,19 @@ export class HouseController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
+  @Get('ownership/:id')
+  async findHouseOwnershipByUserIdAndHouseId(
+    @Req() req: RequestInterface,
+    @Param('id') idHouse: string,
+  ) {
+    return await this.houseService.findHouseOwnershipByUserIdAndHouseId(
+      req.user.id,
+      +idHouse,
+    );
+  }
+
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
   @Get('user/:id/:idHouse')
   async findOneByUser(
     @Param('id') id: string,

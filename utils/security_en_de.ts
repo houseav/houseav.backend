@@ -127,15 +127,6 @@ export default class SecurityEnDe {
   async decryptData(encryptedData) {
     const plaintext = process.env.VITE_USER_QUEUE_REGISTRATION;
     const password = process.env.VITE_USER_QUEUE_REGISTRATION_KEY;
-    console.log(
-      '\nENCRYPTION:' +
-        encryptedData +
-        '\n plaintext' +
-        plaintext +
-        '\n password' +
-        password,
-    );
-
     const decryptedData = await this.decrypt(encryptedData, password);
     if (plaintext === decryptedData) {
       return true;
@@ -143,4 +134,3 @@ export default class SecurityEnDe {
     return false;
   }
 }
-//
