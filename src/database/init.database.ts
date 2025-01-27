@@ -9,7 +9,7 @@ import { QueueRegister } from 'src/queue-user-registration/entities/queue-regist
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { config } from 'dotenv';
 import { Policy } from 'src/policy/entities/policy.entity';
-import { ADMIN_DASHBOARD_VERIFIER } from 'utils/constants';
+import { ADMIN_DASHBOARD_VERIFIER } from '../../utils/constants';
 config();
 
 @Injectable()

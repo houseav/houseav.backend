@@ -155,12 +155,12 @@ export class HouseService {
       // Filter the user's houses to find the one with the matching idHouse
       const houseFounded = user.fkHouseId.find((house) => house.id === idHouse);
 
-      if (houseFounded.fkQueueHouseRegistrationId.verified == false) {
-        return { verified: false, message: 'House not verified yet' };
-      }
-
       if (!houseFounded) {
         throw new Error('House not found for this user!');
+      }
+
+      if (houseFounded.fkQueueHouseRegistrationId.verified == false) {
+        return { verified: false, message: 'House not verified yet' };
       }
 
       return houseFounded;

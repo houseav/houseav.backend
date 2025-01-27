@@ -42,9 +42,7 @@ export class QueueUserRegistrationService {
     //decrypt token
     const sec = new SecurityEnDe();
     const result = await sec.decryptData(token.data);
-    console.log(result);
     if (!result) throw 'Error while decrypting token';
-    console.log(result);
 
     const queueRegisterNew = new QueueRegister();
     queueRegisterNew.verified = user.verified;

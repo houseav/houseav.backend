@@ -8,7 +8,7 @@ import { House } from 'src/house/entities/house.entity';
 import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
 import { Church } from 'src/church/entities/church.entity';
-import { ADMIN_DASHBOARD_VERIFIER } from 'utils/constants';
+import { ADMIN_DASHBOARD_VERIFIER } from '../../../utils/constants';
 
 // Mock Role
 const mockRole: Role = {
