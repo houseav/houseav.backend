@@ -235,6 +235,7 @@ describe('UserModule', () => {
     expect(mockUserRepository.save).toHaveBeenCalled();
     expect(mockMailgunService.sendEmail).toHaveBeenCalledWith(
       'test@example.com',
+      'testuser',
     );
     expect(result).toEqual({ message: 'User created with success' });
   });
