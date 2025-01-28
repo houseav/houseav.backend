@@ -5,7 +5,7 @@ import { SendEmailDto } from './dto/sendemail-mailgun.dto';
 import { ForgotPasswordDto } from './dto/forgotpassword-mailgun.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Public } from 'src/decorators/public.decorator';
-import { generateSecurePassword } from 'utils/functions';
+import { generateSecurePassword } from '../../utils/functions';
 
 @Controller('mailgun')
 export class MailgunController {
