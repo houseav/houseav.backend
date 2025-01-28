@@ -6,4 +6,8 @@ export class SendEmailDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  username: string;
 }

@@ -81,7 +81,10 @@ export class QueueUserRegistrationService {
     if (!updateUser) throw 'Error while updating user';
 
     //TODO check mailgun service working
-    await this.mailgunService.sendEmailUserVerified(user.email);
+    await this.mailgunService.sendEmailUserVerified(
+      user.email,
+      userNew.username,
+    );
     return { message: 'Verify user queue registration' };
   }
 

@@ -22,11 +22,13 @@ import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/entities/user.entity';
 import { Public } from 'src/decorators/public.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 class RequestInterface extends Request {
   user: User;
 }
 
+@SkipThrottle({ default: true })
 @ApiBearerAuth('access-token')
 @ApiTags('house')
 @Controller('house')
