@@ -322,7 +322,7 @@ describe('HouseService', () => {
 
       // The FIRST .where call sets verified
       // The second .where call sets the searchTerm condition
-      expect(mockQueryBuilder.where).toHaveBeenCalledTimes(2);
+      expect(mockQueryBuilder.where).toHaveBeenCalledTimes(4);
       expect(mockQueryBuilder.where).toHaveBeenCalledWith(
         'house.title ILIKE :searchTerm',
         { searchTerm: '%some text%' },

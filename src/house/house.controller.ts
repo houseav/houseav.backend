@@ -66,6 +66,7 @@ export class HouseController {
       // return res.status(200).json(listings);
     } catch (error) {
       console.error('Error while searching listing:' + error);
+      return [];
     }
   }
 
