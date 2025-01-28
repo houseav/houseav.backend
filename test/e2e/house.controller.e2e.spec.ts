@@ -7,7 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { HouseService } from 'src/house/house.service';
 import * as jwt from 'jsonwebtoken';
 import {
-    mockCreateHouseDtoTyped,
+  mockCreateHouseDtoTyped,
   mockHouse,
 } from 'src/test/mock.entities/mock.entities';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';

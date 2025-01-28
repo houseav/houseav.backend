@@ -6,7 +6,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Public } from 'src/decorators/public.decorator';
 
-
 @Injectable()
 export class PolicyService {
   create(createPolicyDto: CreatePolicyDto) {

@@ -98,7 +98,8 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     referenceLetter.fkQueueRegisterId = queueRegister;
     referenceLetter.createdAt = new Date('2024-09-24 18:57:52.258');
     referenceLetter.updatedAt = new Date('2024-09-24 18:57:52.258');
-    const referenceLetterSaved = await queryRunner.manager.save(referenceLetter);
+    const referenceLetterSaved =
+      await queryRunner.manager.save(referenceLetter);
 
     queueRegister.fkReferenceLetterId = referenceLetterSaved;
     await queryRunner.manager.save(queueRegister);
