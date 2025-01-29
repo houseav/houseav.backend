@@ -14,25 +14,10 @@ jobs:
       NODE_ENV: production
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
       AUTH_SECRET_REFRESH: ${{ secrets.AUTH_SECRET_REFRESH }}
-      DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-      DATABASE_URI: ${{ secrets.DATABASE_URI }}
-      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-      DATABASE_SYNCHRONIZE: ${{ secrets.DATABASE_SYNCHRONIZE }}
-      DATABASE_LOGGING: ${{ secrets.DATABASE_LOGGING }}
+      DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}      
       PORT: ${{ secrets.PORT }}
       AUTH_DURATION: ${{ secrets.AUTH_DURATION }}
-      AUTH_DURATION_REFRESH: ${{ secrets.AUTH_DURATION_REFRESH }}
-      VITE_USER_QUEUE_REGISTRATION: ${{ secrets.VITE_USER_QUEUE_REGISTRATION }}
-      VITE_USER_QUEUE_REGISTRATION_KEY: ${{ secrets.VITE_USER_QUEUE_REGISTRATION_KEY }}
-      VITE_SEC_ALGORITHM: ${{ secrets.VITE_SEC_ALGORITHM }}
-      VITE_SEC_HASH: ${{ secrets.VITE_SEC_HASH }}
-      VITE_SEC_KEY_SIZE: ${{ secrets.VITE_SEC_KEY_SIZE }}
-      VITE_SEC_ITERATION_COUNT: ${{ secrets.VITE_SEC_ITERATION_COUNT }}
-      ADMIN_PSWD: ${{ secrets.ADMIN_PSWD }}
-      ADMIN_MAIL: ${{ secrets.ADMIN_MAIL }}
-      MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+      AUTH_DURATION_REFRESH: ${{ secrets.AUTH_DURATION_REFRESH }}      
 
     steps:
       # Step 1: Check out the code

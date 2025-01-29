@@ -50,6 +50,8 @@ production.env
 .local.env
 *.env
 .act.env
+*act*
+.act*
 
 # temp directory
 .temp
