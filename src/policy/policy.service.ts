@@ -13,7 +13,6 @@ export class PolicyService {
   }
 
   findAll() {
-    console.log('--test--');
     return `This action returns all policy`;
   }
 

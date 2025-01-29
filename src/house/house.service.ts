@@ -426,5 +426,4 @@ function interpolateParamsToCheckQueryMadeByQueryBuilder(queryBuilder) {
     const value = bindings[numberOfProperties[i]];
     sql = sql.replace(`$${i}`, `'${value}'`);
   }
-  console.log('Query made by QueryBuilder: ', sql);
 }
