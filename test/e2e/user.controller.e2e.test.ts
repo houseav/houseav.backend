@@ -24,7 +24,7 @@ const mockUserService = {
 };
 
 describe('UserController (e2e)', () => {
-  jest.setTimeout(30000); // or in a describe block: jest.setTimeout(30000);
+  jest.setTimeout(30000);
   let app: INestApplication;
   let moduleFixture: TestingModule;
 
@@ -32,7 +32,7 @@ describe('UserController (e2e)', () => {
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideGuard(AuthGuard('jwt')) // Mock the AuthGuard
+      .overrideGuard(AuthGuard('jwt'))
       .useValue({
         canActivate: jest.fn(() => true),
       })

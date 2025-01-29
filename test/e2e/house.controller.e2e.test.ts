@@ -32,7 +32,7 @@ const mockHouseService = {
 };
 
 describe('HouseController (e2e)', () => {
-  jest.setTimeout(30000); // or in a describe block: jest.setTimeout(30000);
+  jest.setTimeout(30000);
   let app: INestApplication;
   let moduleFixture: TestingModule;
 
