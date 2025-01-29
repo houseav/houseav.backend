@@ -103,10 +103,10 @@ export class CreateHouseDto {
   availability: boolean;
 
   @ApiProperty({ example: `2020-03-04` })
-  availabilityDateStart: Date;
+  availabilityDateStart?: Date;
 
   @ApiProperty({ example: `2020-03-04` })
-  availabilityDateEnd: Date;
+  availabilityDateEnd?: Date;
 
   @ApiProperty({ example: 10 })
   sleepPlace?: number;

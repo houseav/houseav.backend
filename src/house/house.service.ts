@@ -217,15 +217,16 @@ export class HouseService {
       typeof query.searchTerm === 'string' &&
       query.searchTerm.trim() !== ''
     ) {
-      queryBuilder.where('house.title ILIKE :searchTerm', {
-        searchTerm: `%${query.searchTerm}%`,
-      });
-      queryBuilder.where('house.city ILIKE :searchTerm', {
-        searchTerm: `%${query.searchTerm}%`,
-      });
-      queryBuilder.where('house.state ILIKE :searchTerm', {
-        searchTerm: `%${query.searchTerm}%`,
-      });
+      queryBuilder
+        .where('house.title ILIKE :searchTerm', {
+          searchTerm: `%${query.searchTerm}%`,
+        })
+        .orWhere('house.city ILIKE :searchTerm', {
+          searchTerm: `%${query.searchTerm}%`,
+        })
+        .orWhere('house.state ILIKE :searchTerm', {
+          searchTerm: `%${query.searchTerm}%`,
+        });
     } else {
       if (query) {
         delete query.searchTerm;
