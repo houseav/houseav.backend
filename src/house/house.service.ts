@@ -155,12 +155,12 @@ export class HouseService {
       // Filter the user's houses to find the one with the matching idHouse
       const houseFounded = user.fkHouseId.find((house) => house.id === idHouse);
 
-      if (houseFounded.fkQueueHouseRegistrationId.verified == false) {
-        return { verified: false, message: 'House not verified yet' };
-      }
-
       if (!houseFounded) {
         throw new Error('House not found for this user!');
+      }
+
+      if (houseFounded.fkQueueHouseRegistrationId.verified == false) {
+        return { verified: false, message: 'House not verified yet' };
       }
 
       return houseFounded;
@@ -217,9 +217,16 @@ export class HouseService {
       typeof query.searchTerm === 'string' &&
       query.searchTerm.trim() !== ''
     ) {
-      queryBuilder.where('house.title ILIKE :searchTerm', {
-        searchTerm: `%${query.searchTerm}%`,
-      });
+      queryBuilder
+        .where('house.title ILIKE :searchTerm', {
+          searchTerm: `%${query.searchTerm}%`,
+        })
+        .orWhere('house.city ILIKE :searchTerm', {
+          searchTerm: `%${query.searchTerm}%`,
+        })
+        .orWhere('house.state ILIKE :searchTerm', {
+          searchTerm: `%${query.searchTerm}%`,
+        });
     } else {
       if (query) {
         delete query.searchTerm;
@@ -420,5 +427,4 @@ function interpolateParamsToCheckQueryMadeByQueryBuilder(queryBuilder) {
     const value = bindings[numberOfProperties[i]];
     sql = sql.replace(`$${i}`, `'${value}'`);
   }
-  console.log('Query made by QueryBuilder: ', sql);
 }

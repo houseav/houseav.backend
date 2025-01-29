@@ -8,7 +8,8 @@ import { House } from 'src/house/entities/house.entity';
 import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
 import { Church } from 'src/church/entities/church.entity';
-import { ADMIN_DASHBOARD_VERIFIER } from 'utils/constants';
+import { ADMIN_DASHBOARD_VERIFIER } from '../../../utils/constants';
+import { CreateHouseDto } from 'src/house/dto/create-house.dto';
 
 // Mock Role
 const mockRole: Role = {
@@ -119,6 +120,39 @@ const mockHouse: House = {
   fkUserId: null, // This will be set later
   fkMapId: null, // This will be set later
   fkQueueHouseRegistrationId: null, // This will be set later
+};
+
+const mockCreateHouseDtoTyped: CreateHouseDto = {
+  title: 'Beautiful House',
+  description: 'A lovely house with a stunning garden.',
+  address: '123 Main St',
+  zipcode: '12345',
+  streetNumber: '10',
+  city: 'Milan',
+  state: 'Lombardy',
+  bathrooms: 2,
+  bedrooms: 3,
+  furnished: true,
+  parking: true,
+  type: 'Villa',
+  wifi: true,
+  imageUrls: 'https://example.com/images/house.jpg',
+  availability: true,
+  availabilityDateStart: new Date('2025-01-01'),
+  availabilityDateEnd: new Date('2025-12-31'),
+  sleepPlace: 4,
+  allergy: 'None',
+  animals: 'Pets Allowed',
+  requestRoommateType: 'Couples; Families; Children',
+  transportation: 'Car; Public Transport',
+  zone: 'Downtown',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  userId: 1, // or a User object
+  queueHouseId: 1, // or a QueueHouseRegistration object
+  verified: false,
+  longitude: '9.112047290691110',
+  latitude: '45.49220310174620',
 };
 
 // Mock User
@@ -270,6 +304,7 @@ export {
   mockReferenceLetter,
   mockHistorySessionLogin,
   mockCreateHouseDto,
+  mockCreateHouseDtoTyped,
   mockHouse,
   getMockHouseObject,
   mockQueueHouseRegistration,

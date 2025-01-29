@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { ReferenceLetter } from '../../reference-letter/entities/reference-letter.entity';
-import { ADMIN_DASHBOARD_VERIFIER } from 'utils/constants';
+import { ADMIN_DASHBOARD_VERIFIER } from '../../../utils/constants';
 
 @Entity('Queue-Register')
 export class QueueRegister {

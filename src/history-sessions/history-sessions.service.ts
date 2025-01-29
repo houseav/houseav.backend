@@ -9,8 +9,8 @@ import { Repository } from 'typeorm';
 export class HistorySessionsService {
   constructor(
     @InjectRepository(HistorySession)
-    private historySession: Repository<HistorySession>
-  ){}
+    private historySession: Repository<HistorySession>,
+  ) {}
 
   create(createHistorySessionDto: CreateHistorySessionDto) {
     return 'This action adds a new historySession';

@@ -42,9 +42,7 @@ export class QueueUserRegistrationService {
     //decrypt token
     const sec = new SecurityEnDe();
     const result = await sec.decryptData(token.data);
-    console.log(result);
     if (!result) throw 'Error while decrypting token';
-    console.log(result);
 
     const queueRegisterNew = new QueueRegister();
     queueRegisterNew.verified = user.verified;
@@ -83,7 +81,10 @@ export class QueueUserRegistrationService {
     if (!updateUser) throw 'Error while updating user';
 
     //TODO check mailgun service working
-    await this.mailgunService.sendEmailUserVerified(user.email);
+    await this.mailgunService.sendEmailUserVerified(
+      user.email,
+      userNew.username,
+    );
     return { message: 'Verify user queue registration' };
   }
 

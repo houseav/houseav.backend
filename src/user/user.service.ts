@@ -128,7 +128,10 @@ export class UserService {
               referenceLetterSaved,
             );
 
-          await this.mailgunService.sendEmail(userInfo.email);
+          await this.mailgunService.sendEmail(
+            userInfo.email,
+            userSaved.username,
+          );
           if (userUpdateQueue && referenceLetterUpdate)
             return { message: 'User created with success' };
         }

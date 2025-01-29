@@ -16,7 +16,10 @@ export class QueueFeatureRequestsService {
     return `This action returns a #${id} queueFeatureRequest`;
   }
 
-  update(id: number, updateQueueFeatureRequestDto: UpdateQueueFeatureRequestDto) {
+  update(
+    id: number,
+    updateQueueFeatureRequestDto: UpdateQueueFeatureRequestDto,
+  ) {
     return `This action updates a #${id} queueFeatureRequest`;
   }
 

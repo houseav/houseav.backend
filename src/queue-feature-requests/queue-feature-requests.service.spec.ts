@@ -9,7 +9,9 @@ describe('QueueFeatureRequestsService', () => {
       providers: [QueueFeatureRequestsService],
     }).compile();
 
-    service = module.get<QueueFeatureRequestsService>(QueueFeatureRequestsService);
+    service = module.get<QueueFeatureRequestsService>(
+      QueueFeatureRequestsService,
+    );
   });
 
   it('should be defined', () => {

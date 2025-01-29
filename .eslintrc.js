@@ -22,4 +22,12 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },
+  // overrides: [
+  //   {
+  //     files: ['*.ts', '*.tsx'], // Apply to TypeScript files
+  //     rules: {
+  //       '@typescript-eslint/no-unused-vars': 'off', // Disable the rule
+  //     },
+  //   },
+  // ],
 };
