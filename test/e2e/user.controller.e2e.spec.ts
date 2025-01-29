@@ -24,6 +24,7 @@ const mockUserService = {
 };
 
 describe('UserController (e2e)', () => {
+  jest.setTimeout(30000); // or in a describe block: jest.setTimeout(30000);
   let app: INestApplication;
   let moduleFixture: TestingModule;
 

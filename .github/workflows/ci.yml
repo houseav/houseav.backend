@@ -11,41 +11,57 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: production
+      NODE_ENV: development
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
       AUTH_SECRET_REFRESH: ${{ secrets.AUTH_SECRET_REFRESH }}
-      DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}      
       PORT: ${{ secrets.PORT }}
       AUTH_DURATION: ${{ secrets.AUTH_DURATION }}
-      AUTH_DURATION_REFRESH: ${{ secrets.AUTH_DURATION_REFRESH }}      
+      AUTH_DURATION_REFRESH: ${{ secrets.AUTH_DURATION_REFRESH }}
+
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: houseavdb
+      DATABASE_URI: postgresql://postgres:password@postgres:5432/houseavdb
+      DATABASE_SYNCHRONIZE: 'true'
+      DATABASE_LOGGING: 'true'
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: houseavdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5      
 
     steps:
-      # Step 1: Check out the code
       - name: Check out repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Node.js
       - name: Use Node.js 22
         uses: actions/setup-node@v3
         with:
           node-version: '22.2.0'
 
-      # Step 3: Install dependencies
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
 
-      # Step 4: Lint code (optional)
       - name: Lint code
         run: npm run lint
 
-      # Step 5: Build the app (optional if you need to build before tests)
       - name: Build app
         run: npm run build
 
-      # Step 6: Run unit tests
       - name: Run unit tests
         run: npm run test
 
-      # Step 7 (optional): Run E2E tests
       - name: Run e2e tests
         run: npm run test:e2e
