@@ -9,7 +9,7 @@ import { QueueRegister } from 'src/queue-user-registration/entities/queue-regist
 import { ReferenceLetter } from 'src/reference-letter/entities/reference-letter.entity';
 import { config } from 'dotenv';
 import { Policy } from 'src/policy/entities/policy.entity';
-import { ADMIN_DASHBOARD_VERIFIER } from 'utils/constants';
+import { ADMIN_DASHBOARD_VERIFIER } from '../../utils/constants';
 config();
 
 @Injectable()
@@ -98,7 +98,8 @@ export class DatabaseInitService implements OnApplicationBootstrap {
     referenceLetter.fkQueueRegisterId = queueRegister;
     referenceLetter.createdAt = new Date('2024-09-24 18:57:52.258');
     referenceLetter.updatedAt = new Date('2024-09-24 18:57:52.258');
-    const referenceLetterSaved = await queryRunner.manager.save(referenceLetter);
+    const referenceLetterSaved =
+      await queryRunner.manager.save(referenceLetter);
 
     queueRegister.fkReferenceLetterId = referenceLetterSaved;
     await queryRunner.manager.save(queueRegister);

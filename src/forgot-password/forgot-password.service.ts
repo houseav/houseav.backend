@@ -5,7 +5,7 @@ import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
 import { ForgotPassword } from './entities/forgot-password.entity';
 import { User } from 'src/user/entities/user.entity';
 import { ForgotPasswordResponse } from './response/ForgotPasswordResponse';
-import { GeneratePassword } from 'utils/functions';
+import { GeneratePassword } from '../../utils/functions';
 import { MailgunService } from 'src/mailgun/mailgun.service';
 import * as bcrypt from 'bcrypt';
 

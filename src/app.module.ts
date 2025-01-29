@@ -40,9 +40,27 @@ import { HistorySessionsModule } from './history-sessions/history-sessions.modul
 import { HistorySession } from './history-sessions/entities/history-session.entity';
 import { MapGeometryModule } from './map-geometry/map-geometry.module';
 import { MapGeometry } from './map-geometry/entities/map-geometry.entity';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 10,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 100,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 1000,
+      },
+    ]),
     // TypeOrmModule.forRoot(HouaseavDatabaseConfig),
     ConfigModule.forRoot({
       envFilePath:
@@ -109,6 +127,10 @@ import { MapGeometry } from './map-geometry/entities/map-geometry.entity';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
   exports: [AppService],

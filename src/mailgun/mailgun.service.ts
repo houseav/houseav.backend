@@ -13,7 +13,10 @@ import { HouseVerifiedMailTemplate } from './templates/house-verified';
 
 @Injectable()
 export class MailgunService {
-  async sendEmail(destinationEmail: string): Promise<MessagesSendResult> {
+  async sendEmail(
+    destinationEmail: string,
+    username: string,
+  ): Promise<MessagesSendResult> {
     try {
       const mailgun = new Mailgun(formData);
       const mg = mailgun.client({
@@ -25,7 +28,7 @@ export class MailgunService {
         from: `${MAILGUN_USER} <${MAILGUN_FROM_NO_REPLY}>`,
         to: [destinationEmail],
         subject: '[Houseav] Hello There!',
-        html: alert,
+        html: alert(username),
       });
       console.log(`[INFO] email sent: ${JSON.stringify(msg)}`);
       return msg;
@@ -61,7 +64,10 @@ export class MailgunService {
     }
   }
 
-  async sendEmailUserVerified(email: string): Promise<MessagesSendResult> {
+  async sendEmailUserVerified(
+    email: string,
+    username: string,
+  ): Promise<MessagesSendResult> {
     try {
       const mailgun = new Mailgun(formData);
       const mg = mailgun.client({
@@ -73,7 +79,7 @@ export class MailgunService {
         from: `${MAILGUN_USER} <${MAILGUN_FROM_NO_REPLY}>`,
         to: [email],
         subject: '[Houseav] Account Verified',
-        html: UserVerifiedMailTemplate(),
+        html: UserVerifiedMailTemplate(username),
       });
 
       return msg;

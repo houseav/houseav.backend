@@ -41,7 +41,7 @@ export class User {
   //   this.fkRoleId = fkRoleId;
   //   this.fkChurchId = fkChurchId;
   // }
-  constructor(){}
+  constructor() {}
 
   @PrimaryGeneratedColumn()
   id?: number;

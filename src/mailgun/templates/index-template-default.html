@@ -1,10 +1,3 @@
-import { FORGOT_PASSWORD_ENDPOINT } from '../../../utils/constants';
-
-export const ForgotPassword = (
-  temporaryPassword: string,
-  email: string,
-  timeCreation: Date,
-): string => `
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html
   xmlns="http://www.w3.org/1999/xhtml"
@@ -525,7 +518,7 @@ export const ForgotPassword = (
                                 "
                               >
                                 <div>
-                                  <strong>Password Reset 🔄</strong>
+                                  <strong>Congratulazioni! 🎉</strong>
                                   <br />
                                 </div>
                               </h1>
@@ -582,7 +575,7 @@ export const ForgotPassword = (
                                       font-size: 16px;
                                       line-height: 25.6px;
                                     "
-                                    ><strong>Ciao 👋</strong></span
+                                    ><strong>Mr. Lucas</strong></span
                                   >
                                 </p>
                                 <p
@@ -599,8 +592,8 @@ export const ForgotPassword = (
                                     margin: 0px;
                                   "
                                 >
-                                  
-								Ti stiamo inviando una password temporanea per accedere alla pagina di reimpostazione della password del tuo account.
+                                  Stiamo esaminando il tuo profilo per
+                                  garantire la sicurezza di houseav.
                                 </p>
                                 <p
                                   style="
@@ -616,9 +609,9 @@ export const ForgotPassword = (
                                     margin: 0px;
                                   "
                                 >
-                                  Il link scadrá in 5 minuti.
+                                  Ti invieremo un'email non appena il tuo
+                                  profilo sarà pronto.
                                 </p>
-
                                 <p
                                   style="
                                     font-size: 14px;
@@ -626,26 +619,6 @@ export const ForgotPassword = (
                                     margin: 0px;
                                   "
                                 ></p>
-								<table align="start" role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse:collapse;max-width:600px;width:100%;background-color:#7b97bc; padding: 20px; margin: 20px;">
-																	<tr style="vertical-align:middle;" valign="middle">
-																		<td>
-																				<tr style="vertical-align:middle;" valign="middle">
-																					<td align="left" style="padding:0 0 0 30px;" class="content">
-																					<a href="${FORGOT_PASSWORD_ENDPOINT}?token=${encodeURIComponent(temporaryPassword)}&email=${encodeURIComponent(email)}&timeCreation=${encodeURIComponent(timeCreation.toISOString())}" 
-																					   style="font-size:16px;mso-line-height-rule:exactly;line-height:24px;font-family:Arial,sans-serif;font-weight:bold;background:#d3d3d3;text-decoration:none;padding:15px 25px;color:#040404;border-radius:4px;display:inline-block;mso-padding-alt:0;text-underline-color:#ffffff;" 
-																					   class="dark-button">Reset password</a>
-
-																					<style>
-																					    .dark-button:hover {
-																					        background-color: #000000 !important; /* Black on hover */
-																					        color: #ffffff !important; /* Ensure text remains visible */
-																					    }
-																					</style>
-																					</td>
-																				</tr>																			
-																		</td>
-																	</tr>
-																</table>
                                 <br />
                                 <br />
                                 <p
@@ -967,4 +940,3 @@ export const ForgotPassword = (
   <!--[if IE]></div><![endif]-->
 </body>
 </html>
-`;
