@@ -67,6 +67,9 @@ $ act push --env .act.env --secret-file .act.env
 
 **you can also spcify container architecture
 $ act push --env .act.env --secret-file .act.env --container-architecture linux/arm64  
+
+or using:
+$ npm run local:ci
 ```
 
 ## Stay in touch

@@ -41,6 +41,7 @@ describe('HouseService', () => {
       skip: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
       getMany: jest.fn(),
+      orWhere: jest.fn().mockReturnThis(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -322,9 +323,9 @@ describe('HouseService', () => {
 
       // The FIRST .where call sets verified
       // The second .where call sets the searchTerm condition
-      expect(mockQueryBuilder.where).toHaveBeenCalledTimes(4);
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'house.title ILIKE :searchTerm',
+      expect(mockQueryBuilder.where).toHaveBeenCalledTimes(2);
+      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(
+        'house.city ILIKE :searchTerm',
         { searchTerm: '%some text%' },
       );
     });
