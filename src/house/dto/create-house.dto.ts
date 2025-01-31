@@ -148,4 +148,6 @@ export class CreateHouseDto {
 
   @ApiProperty({ example: `45.49220310174620` })
   latitude?: string;
+
+  email?: string;
 }

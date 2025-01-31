@@ -8,6 +8,7 @@ import { User } from 'src/user/entities/user.entity';
 import { QueueHouseRegistration } from 'src/queue-house-registration/entities/queue-house-registration.entity';
 import { HouseResponse } from './dto/house-response';
 import { MapGeometry } from 'src/map-geometry/entities/map-geometry.entity';
+import { MailgunService } from 'src/mailgun/mailgun.service';
 
 @Injectable()
 export class HouseService {
@@ -20,6 +21,7 @@ export class HouseService {
     private queueHouseRegistrationRepository: Repository<QueueHouseRegistration>,
     @InjectRepository(MapGeometry)
     private mapGeometryRepository: Repository<MapGeometry>,
+    private readonly mailgunService: MailgunService,
   ) {}
 
   async create(createHouseDto: CreateHouseDto): Promise<any> {
@@ -41,6 +43,12 @@ export class HouseService {
       queueHouse.verified = false;
       const houseQueueSaved =
         await this.queueHouseRegistrationRepository.save(queueHouse);
+
+      await this.mailgunService.sendEmailHouseInReview(
+        createHouseDto.email,
+        `all' indirizzo: ${house.address}, ${house.city}, con titolo: ${house.title}`,
+      );
+
       if (houseQueueSaved) {
         houseSaved.fkQueueHouseRegistrationId = houseQueueSaved;
         houseSaved.fkMapId = mapGeometrySaved;

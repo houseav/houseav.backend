@@ -11,14 +11,14 @@ async function bootstrap() {
 | | | | (_) | |_| / __\\__  | |_) \\ V _ 
 |_| |_|\\___/|_.__/\\___|___/|_.__/ \\_(_)                                    
 `;
-const backend_house_ascii = `
+  const backend_house_ascii = `
     _m_   
   /\____\\    
   |_|""|                                                    Backend
 _/______\____________________________________________________________________
 `;
-console.log(house);
-console.log(backend_house_ascii);
+  console.log(house);
+  console.log(backend_house_ascii);
 
   const app = await NestFactory.create(AppModule, { cors: true });
 
