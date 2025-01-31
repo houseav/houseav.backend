@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { QueueHouseRegistrationService } from './queue-house-registration.service';
 import { CreateQueueHouseRegistrationDto } from './dto/create-queue-house-registration.dto';
-import { UpdateQueueHouseRegistrationDto } from './dto/update-queue-house-registration.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -28,7 +27,7 @@ export class QueueHouseRegistrationController {
 
   @Post('/verify')
   verify(
-    @Body() createQueueHouseRegistrationDto: UpdateQueueHouseRegistrationDto,
+    @Body() createQueueHouseRegistrationDto: CreateQueueHouseRegistrationDto,
   ) {
     return this.queueHouseRegistrationService.verify(
       createQueueHouseRegistrationDto,
@@ -62,7 +61,7 @@ export class QueueHouseRegistrationController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateQueueHouseRegistrationDto: UpdateQueueHouseRegistrationDto,
+    @Body() updateQueueHouseRegistrationDto: CreateQueueHouseRegistrationDto,
   ) {
     return this.queueHouseRegistrationService.update(
       +id,

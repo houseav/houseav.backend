@@ -70,6 +70,18 @@ export class MailgunController {
       houseTitle,
     );
   }
+
+  @Public()
+  @Post('/house-in-review')
+  async sendEmailHouseInReview(
+    @Body() sendEmailDto: SendEmailDto,
+    @Body() houseTitle: string,
+  ): Promise<any> {
+    return await this.mailgunService.sendEmailHouseInReview(
+      sendEmailDto.email,
+      houseTitle,
+    );
+  }
 }
 
 function parseAndValidateDate(dateString: string) {

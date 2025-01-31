@@ -18,6 +18,7 @@ import { UserService } from 'src/user/user.service';
 import { HouseService } from './house.service';
 import { MapGeometryService } from 'src/map-geometry/map-geometry.service';
 import { QueueHouseRegistrationService } from 'src/queue-house-registration/queue-house-registration.service';
+import { MailgunService } from 'src/mailgun/mailgun.service';
 
 describe('HouseService', () => {
   let houseService: HouseService;
@@ -96,6 +97,16 @@ describe('HouseService', () => {
           provide: getRepositoryToken(MapGeometry),
           useValue: {
             save: jest.fn(),
+          },
+        },
+        {
+          provide: MailgunService,
+          useValue: {
+            sendEmail: jest.fn(),
+            sendForgotPasswordEmail: jest.fn(),
+            sendEmailUserVerified: jest.fn(),
+            sendEmailHouseVerified: jest.fn(),
+            sendEmailHouseInReview: jest.fn(),
           },
         },
       ],

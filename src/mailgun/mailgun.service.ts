@@ -10,6 +10,7 @@ import { alert } from './templates/sign-up';
 import { ForgotPassword } from './templates/forgot-password';
 import { UserVerifiedMailTemplate } from './templates/user-verified';
 import { HouseVerifiedMailTemplate } from './templates/house-verified';
+import { HouseInVerifyMailTemplate } from './templates/house-in-verified';
 
 @Injectable()
 export class MailgunService {
@@ -105,6 +106,31 @@ export class MailgunService {
         to: [email],
         subject: '[Houseav] House Verified',
         html: HouseVerifiedMailTemplate(houseTitle),
+      });
+
+      return msg;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async sendEmailHouseInReview(
+    email: string,
+    houseTitle: string,
+  ): Promise<MessagesSendResult> {
+    try {
+      const mailgun = new Mailgun(formData);
+      const mg = mailgun.client({
+        username: 'mailgun@support.houseav.life',
+        key: process.env.MAILGUN_API_KEY,
+      });
+
+      const msg = await mg.messages.create(MAILGUN_DOMAIN, {
+        from: `${MAILGUN_USER} <${MAILGUN_FROM_NO_REPLY}>`,
+        to: [email],
+        subject: '[Houseav] House in review',
+        html: HouseInVerifyMailTemplate(houseTitle),
       });
 
       return msg;

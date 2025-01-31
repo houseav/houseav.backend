@@ -60,6 +60,7 @@ import { MapGeometryService } from 'src/map-geometry/map-geometry.service';
     HouseService,
     UserService,
     RoleService,
+    MailgunService,
     QueueHouseRegistrationService,
     PolicyService,
     ReferenceLetterService,
