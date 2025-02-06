@@ -7,6 +7,7 @@ export class AppController {
   @Get()
   @Public()
   async getTestRunning() {
-    return '[NestJS] Server is running';
+    console.log(process.env.NODE_ENV);
+    return `[NestJS] Server is running: ${process.env.NODE_ENV}`;
   }
 }
