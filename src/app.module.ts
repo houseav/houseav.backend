@@ -64,7 +64,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     // TypeOrmModule.forRoot(HouaseavDatabaseConfig),
     ConfigModule.forRoot({
       envFilePath:
-        process.env.NODE_ENV === 'production' ? '.prod.env' : '.local.env',
+        process.env.NODE_ENV === 'production' ? '.prod.env' : '.develop.env',
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({

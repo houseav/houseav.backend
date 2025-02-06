@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config({
-  path: process.env.NODE_ENV === 'production' ? '.prod.env' : '.local.env',
+  path: process.env.NODE_ENV === 'production' ? '.prod.env' : '.develop.env',
 });
 
 // import { ConfigService } from '@nestjs/config';
