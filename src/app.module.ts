@@ -64,16 +64,21 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     // TypeOrmModule.forRoot(HouaseavDatabaseConfig),
     ConfigModule.forRoot({
       envFilePath:
-        process.env.NODE_ENV === 'production' ? '.prod.env' : '.develop.env',
+        process.env.NODE_ENV === 'production'
+          ? '.prod.env'
+          : process.env.NODE_ENV === 'local'
+            ? '.env'
+            : '.develop.env',
       isGlobal: true,
+      ignoreEnvFile: false
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {        
         return {
           type: 'postgres',
-          url: configService.get<string>('DATABASE_URI'),
+          url: process.env.NODE_ENV === 'local' ? 'postgresql://postgres:password@localhost:5432/houseavdb' : configService.get<string>('DATABASE_URI'),
           // host: configService.get<string>('DATABASE_HOST'),
           // database: configService.get<string>('DATABASE_NAME'),
           // username: configService.get<string>('DATABASE_USERNAME'),
@@ -96,7 +101,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
           logging: false,
         };
       },
-
+      
       dataSourceFactory: async (options) => {
         const dataSource = await new DataSource(options).initialize();
         return dataSource;
