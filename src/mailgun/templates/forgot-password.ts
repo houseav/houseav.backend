@@ -600,7 +600,7 @@ export const ForgotPassword = (
                                   "
                                 >
                                   
-								Ti stiamo inviando una password temporanea per accedere alla pagina di reimpostazione della password del tuo account.
+								Ti stiamo inviando una link temporaneo per accedere alla pagina di reimpostazione della password del tuo account.
                                 </p>
                                 <p
                                   style="
@@ -616,7 +616,7 @@ export const ForgotPassword = (
                                     margin: 0px;
                                   "
                                 >
-                                  Il link scadrá in 5 minuti.
+                                  Clicca il pulsante qui sotto, scadrá in 5 minuti.
                                 </p>
 
                                 <p

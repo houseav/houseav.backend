@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -166,7 +166,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<User> {
     return this.userRepository.findOne({
-      where: { email },
+      where: { email: ILike(email) },
       relations: {
         fkRoleId: true,
       },
