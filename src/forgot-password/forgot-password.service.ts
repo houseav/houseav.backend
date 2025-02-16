@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
 import { ForgotPassword } from './entities/forgot-password.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -56,7 +56,7 @@ export class ForgotPasswordService {
 
   async createByEmail(email: string): Promise<ForgotPasswordResponse> {
     const user = await this.userRepository.findOne({
-      where: { email: email },
+      where: { email: ILike(email) },
     });
 
     if (!user) {
