@@ -22,7 +22,7 @@ export class ReferenceLetter {
   @Column({ nullable: false })
   surnamePastorLeader: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   numberPastorLeader: string;
 
   @Column({ nullable: false })
